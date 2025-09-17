@@ -5,9 +5,9 @@ Proyecto realizado en Haskell que implementa una de las fases del compilador: el
 ## Equipo: Haskellcatl
 ### Integrantes:
 - Arias Villarroel Alejandra Valentina 
-- del Valle Vera, Nancy Elena 
+- del Valle Vera Nancy Elena 
 - Martínez Hidalgo Paola Mildred 
-- Martínez Mejía, Eduardo 
+- Martínez Mejía Eduardo 
 - Sánchez Victoria Leslie Paola
 
 
