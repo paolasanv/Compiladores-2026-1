@@ -47,7 +47,11 @@ library:
   - Lib
   - Regex.Parser
   - Regex.Lexer
-  - Regex.Interp
+  - Regex.ReadFile
+  - Automatas.NFA_E
+  - Automatas.NFA
+  - Automatas.DFA
+  - Automatas.DFA_min
   build-tools:
     - happy
 

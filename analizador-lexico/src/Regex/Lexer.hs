@@ -16,7 +16,7 @@ data Token
     | CharacterS Char  -- ^ Un carácter alfanumérico o símbolo permitido.
     | UnionS           -- ^ Operador de unión: (|).
     | ConcatS          -- ^ Operador de concatenación: (.).
-    | KleeneS          -- ^ Operador de cierre de Kleene: (*).
+    | KleeneS          -- ^ Operador de estrella de Kleene: (*).
     | OpenParenthesis  -- ^ Paréntesis de apertura: '('.
     | CloseParenthesis -- ^ Paréntesis de cierre: ')'.
     deriving (Show, Eq)

@@ -30,7 +30,11 @@ library
       Lib
       Regex.Parser
       Regex.Lexer
-      Regex.Interp
+      Regex.ReadFile
+      Automatas.NFA_E
+      Automatas.NFA
+      Automatas.DFA
+      Automatas.DFA_min
   other-modules:
       Paths_analizador_lexico
   autogen-modules:

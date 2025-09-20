@@ -1,5 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
-module Regex.Interp where
+module Regex.ReadFile where
 
 import Regex.Lexer
 import Regex.Parser
@@ -23,8 +23,8 @@ text2Lines :: T.Text -> [String]
 text2Lines contenido = map T.unpack (T.lines contenido)
 
 -- Función que se ejecuta cuando el archivo es modificado
-procesarArchivo :: FilePath -> IO ()
-procesarArchivo path = do
+processFIle :: FilePath -> IO ()
+processFIle path = do
     contenido <- TIO.readFile path
     putStrLn "\nArchivo procesado. Actualizando las expresiones regulares obtenidas"
     let lineas = text2Lines contenido      
@@ -35,20 +35,20 @@ procesarArchivo path = do
 -- Funcion principal
 file2RegEx :: FilePath -> IO ()
 file2RegEx filename = withManager $ \mgr -> do
-    -- 🔹 Intentar primero con archivo local
+    -- Intentar primero con archivo local
     existeLocal <- doesFileExist filename
     ruta <- if existeLocal
             then return filename
             else getDataFileName filename
 
-    -- 🔹 Ejecutar inmediatamente la primera vez
-    procesarArchivo ruta
+    -- Ejecutar inmediatamente la primera vez
+    processFIle ruta
 
-    -- 🔹 Obtenemos la carpeta y el nombre del archivo
+    -- Obtenemos la carpeta y el nombre del archivo
     let carpeta = takeDirectory ruta
     let archivo = takeFileName ruta
 
-    -- 🔹 Vigilar cambios en tiempo real
+    -- Vigilar cambios en tiempo real
     watchDir
       mgr
       carpeta
@@ -57,7 +57,7 @@ file2RegEx filename = withManager $ \mgr -> do
           _ -> False)
       (\_ -> do
           putStrLn $ "Cambio detectado en: " ++ archivo
-          procesarArchivo ruta)
+          processFIle ruta)
 
     putStrLn $ "Observando " ++ archivo ++ " en " ++ carpeta ++ " por cambios. Presiona Ctrl+C para salir."
     forever $ threadDelay 1000000
