@@ -30,7 +30,11 @@ library
       Lib
       Regex.Parser
       Regex.Lexer
-      Regex.Interp
+      Regex.ReadFile
+      Automatas.NFA_E
+      Automatas.NFA
+      Automatas.DFA
+      Automatas.DFA_min
   other-modules:
       Paths_analizador_lexico
   autogen-modules:
@@ -43,6 +47,7 @@ library
   build-depends:
       array
     , base >=4.7 && <5
+    , containers
     , directory
     , filepath
     , fsnotify
@@ -62,6 +67,7 @@ executable analizador-lexico-exe
       analizador-lexico
     , array
     , base >=4.7 && <5
+    , containers
     , directory
     , filepath
     , fsnotify
@@ -82,6 +88,7 @@ test-suite analizador-lexico-test
       analizador-lexico
     , array
     , base >=4.7 && <5
+    , containers
     , directory
     , filepath
     , fsnotify
