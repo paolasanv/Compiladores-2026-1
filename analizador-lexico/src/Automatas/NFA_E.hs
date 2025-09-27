@@ -11,6 +11,7 @@ module Automatas.NFA_E where
 import Regex.Parser (RegEx(..))
 import qualified Data.Set as Set
 import Data.Set (Set)
+import Data.Maybe
 
 type State = Int
 type Symbol = Maybe Char
