@@ -11,3 +11,11 @@ import Automatas.DFA ( DFA )
 
 min :: DFA -> DFA
 min = undefined
+
+-- Eliminar estados inalcanzables
+inaccessibleStates :: DFA -> DFA
+inaccessibleStates = undefined
+
+-- Calcular las clases de equivalencia (estados equivalentes)
+equivalenceClasses :: DFA -> [[Int]]
+equivalenceClasses = undefined
