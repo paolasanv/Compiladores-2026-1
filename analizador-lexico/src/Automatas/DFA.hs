@@ -18,7 +18,7 @@ data DFA = DFA {
     alphabet    :: Set Char,
     transitions :: Set DeltaDFA, -- δ: Q×Σ→Q
     start       :: State,
-    final       :: State
+    final       :: [State]
 } deriving (Show)
 
 toDFA :: NFA -> DFA
