@@ -75,7 +75,9 @@ repl = runInputT defaultSettings (loop)
       case (words <$> minput, minput) of
         (Nothing, _) -> return ()
         (Just [], _) -> loop
-        (Just [":q"], _) -> return () -- salir con :q
+        (Just [":q"], _) -> do 
+          liftIO $ putStrLn "Chao ;)" 
+          return () -- salir con :q
         (Just ["lexer"], _) -> do     -- llamar a la funcion lexer
           liftIO $ putStrLn "Uso: lexer <cadena>"
           loop

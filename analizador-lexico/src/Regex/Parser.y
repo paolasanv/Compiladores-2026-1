@@ -49,7 +49,7 @@ A : empty              { Empty }
 
 {
 parseError :: [Token] -> a
-parseError _ = error "Parse error"
+parseError _ = error "¡Error al especificar las expresiones regulares!"
 
 data RegEx
     = Empty 
