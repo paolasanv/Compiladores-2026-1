@@ -65,7 +65,7 @@ stack run
 
 5. Para salir del programa puede usar **:q** o **Ctrl + C**.
 
-    ```bash
+  ```bash
   $ stack build
   $ stack run
   Analizador Léxico :) 
