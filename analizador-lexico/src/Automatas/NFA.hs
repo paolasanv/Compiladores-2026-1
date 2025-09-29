@@ -14,13 +14,18 @@ import Data.Set (Set)
 
 type DeltaNoE = (State, Char, [State])
 
-data NFA = NFA {states :: Set State,
-		alphabet :: Set Char,
-		transitions :: Set DeltaNoE,
-		start :: State,
-		final :: [State]}
-		deriving (Show)
-		
+data NFA = NFA {
+    states      :: Set State,
+    alphabet    :: Set Char,
+    transitions :: Set DeltaNoE,
+    start       :: State,
+    final       :: [State]
+}deriving (Show)
+
+toNFA :: NFAE -> NFA
+toNFA = undefined
+
+-- ε-closure(q) = { p | δ(q, ε) =  p }
 stateEclosure :: State -> Set Delta -> Set State
 stateEclosure q d = stateEclosureAux q (Set.toList d)
 
@@ -30,17 +35,16 @@ stateEclosureAux q (x:xs) = case x of
                          (q1, Nothing, q2) | q1 == q -> Set.unions [Set.singleton q2, (stateEclosureAux q xs), (stateEclosureAux q2 xs)]
                          _ -> stateEclosureAux q xs
 
-doDeltaPrima :: State -> Symbol -> Set Delta -> Set State
-doDeltaPrima q c d = doDeltaPrimaAux q c (Set.toList d)
+-- δ^ (q, ε) = ε-closure(q) 
+-- δ^ (q, a) =  ε-closure(δ(ε-closure(q),a)) 
+deltaHat :: State -> Symbol -> Set Delta -> Set State
+deltaHat q c d = Set.unions [doDeltaHat x c d | x <- Set.toList (stateEclosure q d)]
 
-doDeltaPrimaAux :: State -> Symbol -> [Delta] -> Set State
-doDeltaPrimaAux _ _ [] = Set.empty
-doDeltaPrimaAux q c (x:xs) = case x of
-		    (q1, d, q2) | and [q1 == q, Just d == Just c] -> Set.unions [(Set.singleton q2), (doDeltaPrimaAux q c xs)]
-		    _ -> doDeltaPrimaAux q c xs
-		  
-deltaPrima :: State -> Symbol -> Set Delta -> Set State
-deltaPrima q c d = Set.unions [doDeltaPrima x c d | x <- Set.toList (stateEclosure q d)]
+doDeltaHat :: State -> Symbol -> Set Delta -> Set State
+doDeltaHat q c d = doDeltaHatAux q c (Set.toList d)
 
-toNFA :: NFAE -> NFA
-toNFA = undefined
+doDeltaHatAux :: State -> Symbol -> [Delta] -> Set State
+doDeltaHatAux _ _ [] = Set.empty
+doDeltaHatAux q c (x:xs) = case x of
+		    (q1, d, q2) | and [q1 == q, Just d == Just c] -> Set.unions [(Set.singleton q2), (doDeltaHatAux q c xs)]
+		    _ -> doDeltaHatAux q c xs
