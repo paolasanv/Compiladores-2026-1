@@ -19,7 +19,7 @@ type Delta = (State, Symbol, State)
 
 data NFAE = NFAE {
     states      :: Set State,
-    alphabet    :: Set Char,
+    alphabet    :: Set Symbol,
     transitions :: Set Delta,
     start       :: State,
     final       :: State
@@ -42,8 +42,8 @@ thompson Empty l = NFAE {
 
 thompson Epsilon l = NFAE {
     states = Set.fromList [q0, q1],
-    alphabet = Set.singleton ' ',
-    transitions = Set.singleton (q0, Just ' ', q1),
+    alphabet = Set.singleton Nothing,
+    transitions = Set.singleton (q0, Nothing, q1),
     start = q0,
     final = q1}
   where 
@@ -52,7 +52,7 @@ thompson Epsilon l = NFAE {
 
 thompson (Character c) l = NFAE {
     states = Set.fromList [q0, q1],
-    alphabet = Set.singleton c,
+    alphabet = Set.singleton (Just c),
     transitions = Set.singleton (q0, Just c, q1),
     start = q0,
     final = q1}
