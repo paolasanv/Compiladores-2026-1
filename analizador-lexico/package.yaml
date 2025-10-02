@@ -27,6 +27,7 @@ dependencies:
 - fsnotify
 - directory
 - haskeline
+- containers
 
 data-files:
   - regex.txt
@@ -76,3 +77,4 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - analizador-lexico
+    - hspec 

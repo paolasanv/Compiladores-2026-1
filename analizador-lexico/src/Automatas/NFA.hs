@@ -8,9 +8,20 @@ a un autómata finitos no determinista (AFN).
 -}
 module Automatas.NFA where
 
-import Automatas.NFA_E ( NFAE )
+import Automatas.NFA_E (NFAE, State, Delta, Symbol, transitions, alphabet, states)
+import qualified Data.Set as Set
+import Data.Set (Set)
 
-data NFA = NFA -- Definir el tipo de dato para AFN
+type DeltaNoE = (State, Char, [State])
+
+data NFA = NFA {
+    statesNFA      :: Set State,
+    alphabetNFA    :: Set Char,
+    transitionsNFA :: Set DeltaNoE,
+    startNFA       :: State,
+    finalNFA       :: [State]
+}deriving (Show)
+
 
 toNFA :: NFAE -> NFA
 toNFA = undefined

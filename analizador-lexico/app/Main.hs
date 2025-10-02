@@ -7,6 +7,7 @@ import Control.Monad.IO.Class (liftIO)
 
 import Regex.Lexer
 import Regex.Parser
+--import MDD (lexerDo)
 
 import Data.List (intercalate)
 import System.FSNotify
@@ -18,6 +19,14 @@ import qualified Data.Text.IO as TIO
 import Paths_analizador_lexico (getDataFileName)
 import System.Directory (doesFileExist)
 
+{-
+            Lexer Real
+regex :: T.Text  -> RegEx
+regex content = toRegex (text2String content) 
+
+lexerIMP ::  String -> [TokenIMP]
+lexerIMP input = lexerDo (minimize $ toDFA $ toNFA $ toNFAE regex) input 
+-}
 
 -- Simulación del lexer 
 lexerMain :: String -> [String]
@@ -62,7 +71,7 @@ watchRegexFile filename onUpdate = withManager $ \mgr -> do
             putStrLn $ "\nCambio detectado en " ++ archivo
             void $ onUpdate =<< loadRegexFromFile ruta)
 
-    putStrLn $ "Observando " ++ archivo ++ " por cambios..."
+    putStrLn $ "Observando " ++ archivo ++ " por cambios..." 
     forever $ threadDelay 1000000 
 
 -- loop del REPL
