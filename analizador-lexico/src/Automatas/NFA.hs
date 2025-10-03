@@ -34,7 +34,7 @@ toNFA n = NFA {
 		      oficialFinalStates = Set.fromList [ x | x <- oficialStates, elem (final n) (Set.toList (stateEclosure x (transitions n)))]
 		      oficialTransitions = [(q0, (toChar c), (Set.toList q1)) | (q0, c, q1) <- statesDeltaHat, q <- oficialStates, (Set.toList q1) /= [], q0 == q]
 		      statesDeltaHat = nfaEdeltaHat n
-		      oficialAlphabet = [toChar c | c <- Set.toList (alphabet n)]
+		      oficialAlphabet = [ c | Just c <- Set.toList (alphabet n)]
 
 toChar :: Maybe Char -> Char
 toChar Nothing = ' '
