@@ -36,9 +36,9 @@ processFIle path = do
     let nfaes = map toNFAE expresionesRegulares
     putStrLn "\nAutómatas finitos no deterministas con transiciones épsilon (NFA-ε):"
     print nfaes
-    let nfas = map toNFA nfaes
-    putStrLn "\nAutómatas finitos no deterministas (NFA):"
-    print nfas
+    let deltaprima = map nfaEdeltaHat nfaes
+    putStrLn "E-closures por estado y simbolo"
+    print deltaprima
 
 -- Funcion principal
 file2RegEx :: FilePath -> IO ()

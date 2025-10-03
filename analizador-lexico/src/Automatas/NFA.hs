@@ -67,4 +67,3 @@ doDeltaHatAux q c (x:xs) = case x of
 
 nfaEdeltaHat :: NFAE -> [(State, Maybe Char, Set State)]
 nfaEdeltaHat nfae = [(x, y, deltaHat x y (transitions nfae) ) | x <- Set.toList (states nfae), y <- Set.toList (alphabet nfae)]
-
