@@ -3,12 +3,11 @@
 module Main (main) where
 
 import System.Console.Haskeline
-import Control.Monad.IO.Class (liftIO)
 
 import Regex.Lexer
 import Regex.Parser
 
-import Data.List (intercalate)
+import Data.List (intercalate, isPrefixOf)
 import System.FSNotify
 import System.FilePath (takeFileName, takeDirectory)
 import Control.Concurrent (threadDelay, forkIO)
@@ -17,6 +16,15 @@ import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
 import Paths_analizador_lexico (getDataFileName)
 import System.Directory (doesFileExist)
+
+{-
+            Lexer Real
+regex :: T.Text  -> RegEx
+regex content = toRegex (text2String content) 
+
+lexerIMP ::  String -> [TokenIMP]
+lexerIMP input = lexerDo (minimize $ toDFA $ toNFA $ toNFAE regex) input 
+-}
 
 
 -- Simulación del lexer 
@@ -35,11 +43,10 @@ text2String content = intercalate " | " (map T.unpack (T.lines content))
 loadRegexFromFile :: FilePath -> IO RegEx
 loadRegexFromFile path = do
     content <- TIO.readFile path
-    putStrLn "Archivo cargado. Expresión regular actualizada:"
+    putStrLn "Expresión regular actualizada desde el archivo."
     let regex = toRegex (text2String content)
-    print regex
+    putStrLn $ show regex
     return regex
-
 
 -- Vigilar cambios en el archivo de expresiones regulares
 watchRegexFile :: FilePath -> (RegEx -> IO ()) -> IO ()
@@ -59,42 +66,32 @@ watchRegexFile filename onUpdate = withManager $ \mgr -> do
             Modified path _ _ -> takeFileName path == archivo
             _ -> False)
         (\_ -> do
-            putStrLn $ "\nCambio detectado en " ++ archivo
+            putStrLn $ "Cambio detectado en " ++ archivo
             void $ onUpdate =<< loadRegexFromFile ruta)
 
     putStrLn $ "Observando " ++ archivo ++ " por cambios..."
     forever $ threadDelay 1000000 
 
 -- loop del REPL
-repl :: IO ()
-repl = runInputT defaultSettings (loop)
-  where
-    loop :: InputT IO ()
-    loop = do
-      minput <- getInputLine "> "
-      case (words <$> minput, minput) of
-        (Nothing, _) -> return ()
-        (Just [], _) -> loop
-        (Just [":q"], _) -> do 
-          liftIO $ putStrLn "Chao ;)" 
-          return () -- salir con :q
-        (Just ["lexer"], _) -> do     -- llamar a la funcion lexer
-          liftIO $ putStrLn "Uso: lexer <cadena>"
-          loop
-        (_, Just xs) -> do
-          let (cmd, rest) = splitAt 5 xs
-          if take 5 xs == "lexer"
-            then do
-              let args = drop 6 xs
-              liftIO $ print $ lexerMain args
-            else
-              liftIO $ putStrLn $ "Comando desconocido: " ++ xs
-          loop
+replLoop :: InputT IO ()
+replLoop = do
+    minput <- getInputLine ">> "
+    case minput of
+      Nothing   -> return ()
+      Just ""   -> replLoop
+      Just ":q" -> outputStrLn "Chao ;)" >> return ()
+      Just xs 
+        | "lexer" `isPrefixOf` xs -> do
+            let args = drop 6 xs
+            outputStrLn $ show $ lexerMain args
+            replLoop
+        | otherwise -> do
+            outputStrLn $ "Comando desconocido: " ++ xs
+            replLoop
 
 -- main
 main :: IO ()
 main = do
-  putStrLn "Analizador Léxico :)"
-  _ <- forkIO $ watchRegexFile "regex.txt" (\_ -> return ())
-  repl
-
+    putStrLn "\n ===== Analizador Léxico para IMP :) ====== "
+    _ <- forkIO $ watchRegexFile "regex.txt" (\_ -> return ())
+    runInputT defaultSettings replLoop
