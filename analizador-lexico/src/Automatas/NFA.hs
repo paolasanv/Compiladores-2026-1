@@ -1,6 +1,7 @@
 {-|
 Module      : Automatas.NFA
 Description : Autómatas finitos no deterministas.
+Author: Nancy del Valle.
 
 Este módulo implementa el algoritmo de conversión de un 
 autómata finito no determinista con transiciones épsilon (AFN-ε)

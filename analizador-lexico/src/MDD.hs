@@ -1,3 +1,11 @@
+{-|
+Module      : MDD
+Description : Utiliza el AFD mínimo para construir el lexer.
+Author: Nancy del Valle
+
+Este módulo implementa la ejecución sobre el AFD mínimo para definir la función 'lexerIMP'
+la cuál es encargada de realizar el análisis léxico de una cadena de entrada.
+-}
 module MDD where
 
 import Automatas.NFA_E (State)
