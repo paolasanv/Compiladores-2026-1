@@ -3,8 +3,8 @@ Module      : Automatas.DFA_min
 Description : Minimiza un autómata finito determinista.
 Author      : Martinez Mejia Eduardo
 
-Este módulo implementa el algoritmo de minDFAimización de un 
-autómata finito determinDFAista (AFD).
+Este módulo implementa el algoritmo de minimización de un 
+autómata finito determinista (AFD).
 -}
 module Automatas.DFA_min where
 
@@ -14,8 +14,8 @@ import qualified Data.Set as Set
 import Data.Set (Set)
 import Data.List (partition)
 
-minDFA :: DFA -> DFA
-minDFA dfa = 
+minimize :: DFA -> DFA
+minimize dfa = 
     let dfa'      = deleteInaccessible dfa 
         -- Clases de estados equivalentes
         classes   = Set.toList (equivalenceClasses dfa')
