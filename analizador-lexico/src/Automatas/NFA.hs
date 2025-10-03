@@ -8,7 +8,7 @@ a un autómata finitos no determinista (AFN).
 -}
 module Automatas.NFA where
 
-import Automatas.NFA_E (NFAE, State, Delta, Symbol, transitions, alphabet, states)
+import Automatas.NFA_E (NFAE, State, Delta, Symbol, transitions, alphabet, states, start, final)
 import qualified Data.Set as Set
 import Data.Set (Set)
 
@@ -22,6 +22,49 @@ data NFA = NFA {
     finalNFA       :: [State]
 }deriving (Show)
 
-
 toNFA :: NFAE -> NFA
-toNFA = undefined
+toNFA n = NFA {
+		statesNFA = Set.fromList oficialStates,
+    		alphabetNFA = Set.fromList oficialAlphabet,
+    		transitionsNFA = Set.fromList oficialTransitions,
+    		startNFA = start n,
+    		finalNFA = Set.toList oficialFinalStates
+		}
+		where oficialStates = [(start n)] ++ [ x | (q0, c, q1) <- statesDeltaHat, (Set.toList q1) /= [], x <- (Set.toList q1)]
+		      oficialFinalStates = Set.fromList [ x | x <- oficialStates, elem (final n) (Set.toList (stateEclosure x (transitions n)))]
+		      oficialTransitions = [(q0, (toChar c), (Set.toList q1)) | (q0, c, q1) <- statesDeltaHat, q <- oficialStates, (Set.toList q1) /= [], q0 == q]
+		      statesDeltaHat = nfaEdeltaHat n
+		      oficialAlphabet = [toChar c | c <- Set.toList (alphabet n)]
+
+toChar :: Maybe Char -> Char
+toChar Nothing = ' '
+toChar (Just c) = c
+
+-- ε-closure(q) = { p | δ(q, ε) =  p }
+stateEclosure :: State -> Set Delta -> Set State
+stateEclosure q d = stateEclosureAux q listd listd
+		    where listd = Set.toList d
+
+stateEclosureAux :: State -> [Delta] -> [Delta] -> Set State
+stateEclosureAux _ [] _ = Set.empty
+stateEclosureAux q (x:xs) d = case x of
+                         (q1, Nothing, q2) | q1 == q -> Set.unions [Set.singleton q, Set.singleton q2, (stateEclosureAux q xs d), (stateEclosureAux q2 d d)]
+                         _ -> Set.unions [Set.singleton q, stateEclosureAux q xs d]
+
+-- δ^ (q, ε) = ε-closure(q) 
+-- δ^ (q, a) =  ε-closure(δ(ε-closure(q),a)) 
+deltaHat :: State -> Symbol -> Set Delta -> Set State
+deltaHat q c d = Set.unions [doDeltaHat x c d | x <- Set.toList (stateEclosure q d)]
+
+doDeltaHat :: State -> Symbol -> Set Delta -> Set State
+doDeltaHat q c d = doDeltaHatAux q c (Set.toList d)
+
+doDeltaHatAux :: State -> Symbol -> [Delta] -> Set State
+doDeltaHatAux _ _ [] = Set.empty
+doDeltaHatAux q c (x:xs) = case x of
+		    (q1, d, q2) | and [q1 == q, Just d == Just c] -> Set.unions [(Set.singleton q2), (doDeltaHatAux q c xs)]
+		    _ -> doDeltaHatAux q c xs
+
+nfaEdeltaHat :: NFAE -> [(State, Maybe Char, Set State)]
+nfaEdeltaHat nfae = [(x, y, deltaHat x y (transitions nfae) ) | x <- Set.toList (states nfae), y <- Set.toList (alphabet nfae)]
+
