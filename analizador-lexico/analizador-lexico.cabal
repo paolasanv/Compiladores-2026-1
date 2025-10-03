@@ -27,10 +27,9 @@ source-repository head
 
 library
   exposed-modules:
-      Lib
+      MDD
       Regex.Parser
       Regex.Lexer
-      Regex.ReadFile
       Automatas.NFA_E
       Automatas.NFA
       Automatas.DFA
@@ -51,6 +50,7 @@ library
     , directory
     , filepath
     , fsnotify
+    , haskeline
     , text
   default-language: Haskell2010
 
@@ -71,6 +71,7 @@ executable analizador-lexico-exe
     , directory
     , filepath
     , fsnotify
+    , haskeline
     , text
   default-language: Haskell2010
 
@@ -78,6 +79,7 @@ test-suite analizador-lexico-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      MDDspec
       Paths_analizador_lexico
   autogen-modules:
       Paths_analizador_lexico
@@ -92,5 +94,7 @@ test-suite analizador-lexico-test
     , directory
     , filepath
     , fsnotify
+    , haskeline
+    , hspec
     , text
   default-language: Haskell2010

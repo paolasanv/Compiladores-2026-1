@@ -9,5 +9,5 @@ module Automatas.DFA_min where
 
 import Automatas.DFA ( DFA )
 
-min :: DFA -> DFA
-min = undefined
+minimize :: DFA -> DFA
+minimize = undefined

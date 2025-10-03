@@ -4,7 +4,7 @@ Profesor: Manuel Soto Romero
 
 Equipo de desarrollo:
 - Arias Villarroel Alejandra Valentina
-- del Valle Vera, Nancy Elena
+- del Valle Vera Nancy Elena
 - Martínez Hidalgo Paola Mildred
-- Martínez Mejía, Eduardo
+- Martínez Mejía Eduardo
 - Sánchez Victoria Leslie Paola
