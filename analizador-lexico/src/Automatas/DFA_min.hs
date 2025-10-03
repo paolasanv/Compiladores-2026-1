@@ -1,6 +1,7 @@
 {-|
 Module      : Automatas.DFA_min
-Description : Autómatas finitos determinDFAistas minDFAimos.
+Description : Minimiza un autómata finito determinista.
+Author      : Martinez Mejia Eduardo
 
 Este módulo implementa el algoritmo de minDFAimización de un 
 autómata finito determinDFAista (AFD).
