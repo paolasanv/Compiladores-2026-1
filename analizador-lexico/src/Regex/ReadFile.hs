@@ -4,7 +4,7 @@ module Regex.ReadFile where
 import Regex.Lexer
 import Regex.Parser
 import Automatas.NFA_E (toNFAE)
-import Automatas.NFA(nfaEdeltaHat, doDeltaHat, doDeltaHatAux, stateEclosure, stateEclosureAux)
+import Automatas.NFA(nfaEdeltaHat, doDeltaHat, doDeltaHatAux, stateEclosure, stateEclosureAux, toNFA)
 
 import System.FSNotify
 import System.FilePath (takeFileName, takeDirectory)
@@ -31,10 +31,10 @@ processFIle path = do
     putStrLn "\nArchivo procesado. Actualizando las expresiones regulares obtenidas"
     let lineas = text2Lines contenido      
     let expresionesRegulares = map toRegex lineas
-    putStrLn "Expresiones regulares:"
+    putStrLn "\nExpresiones regulares:"
     print expresionesRegulares
     let nfaes = map toNFAE expresionesRegulares
-    putStrLn "Autómatas finitos no deterministas con transiciones épsilon (NFA-ε):"
+    putStrLn "\nAutómatas finitos no deterministas con transiciones épsilon (NFA-ε):"
     print nfaes
     let deltaprima = map nfaEdeltaHat nfaes
     putStrLn "E-closures por estado y simbolo"
