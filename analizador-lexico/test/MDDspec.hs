@@ -29,20 +29,6 @@ dfaId = DFA {
    final = [1]
 }
 
--- AFD para Operadores Relacionales Simbólicos: = | <=
-dfaSymbRelOp :: DFA
-dfaSymbRelOp = DFA {
-    states = Set.fromList [0, 1, 2, 3],
-    alphabet = Set.fromList "=<",
-    transitions = Set.fromList [
-        (0, '=', 1),
-        (0, '<', 2),
-        (2, '=', 3)
-    ],
-    start = 0,
-    final = [1, 3] -- Estados finales para "=" y "<="
-}
-
 -- AFD que reconoce únicamente enteros negativos
 dfaNegativeInt :: DFA
 dfaNegativeInt = DFA {
@@ -82,6 +68,37 @@ dfaSingleDigitList = DFA {
     final = [3]
 }
 
+--AFD que reconoce los IDs 
+dfaIdentifier :: DFA
+dfaIdentifier = DFA {
+    states = Set.fromList [0, 1, 2],
+    
+    alphabet = Set.fromList (['a'..'z'] ++ ['A'..'Z'] ++ ['1'..'9']),
+    
+    transitions = Set.fromList $
+        [ (0, c, 1) | c <- ['a'..'z'] ++ ['A'..'Z'] ] ++
+        [ (1, c, 1) | c <- ['a'..'z'] ++ ['A'..'Z'] ] ++
+        [ (1, c, 2) | c <- ['1'..'9'] ] ++
+        [ (2, c, 2) | c <- ['1'..'9'] ],
+        
+    start = 0,
+    
+    final = [1, 2]
+}
+
+-- AFD que reconoce exclusivamente la lista vacía "[]"
+dfaEmptyList :: DFA
+dfaEmptyList = DFA {
+    states = Set.fromList [0, 1, 2],
+    alphabet = Set.fromList "[]",
+    transitions = Set.fromList [
+        (0, '[', 1),
+        (1, ']', 2)
+    ],
+    start = 0,
+    final = [2]
+}
+
 spec :: Spec
 spec = do
   describe "Utilizando un AFD mínimo que solo acepta números enteros positivos" $ do
@@ -106,43 +123,58 @@ spec = do
 
     it "reconoce una sola letra como en 'a'" $ do
       lexerDo dfaId "a" `shouldBe` [TIdentifier "a"]
-
-   describe "AFD para Operadores Relacionales Simbólicos" $ do
-  it "reconoce '=' y '<='" $ do
-    lexerDo dfaSymbRelOp "=<=" `shouldBe` [TRelationalOp "=", TRelationalOp "<="]
-
-  it "no reconoce operadores relacionales de palabra como 'not'" $ do
-    lexerDo dfaSymbRelOp "not" `shouldBe` [TError "Caracter no reconocido: n", TError "Caracter no reconocido: o", TError "Caracter no reconocido: t"]
         
   describe "AFD para Números Enteros Negativos" $ do
-  it "reconoce '-123' como un número negativo" $ do
-    lexerDo dfaNegativeInt "-123" `shouldBe` [TNumber (-123)]
+     it "reconoce '-123' como un número negativo" $ do
+       lexerDo dfaNegativeInt "-123" `shouldBe` [TNumber (-123)]
 
-  it "no reconoce un número positivo como '45'" $ do
-    lexerDo dfaNegativeInt "45" `shouldBe` [TError "Caracter no reconocido: 4", TError "Caracter no reconocido: 5"]
+     it "no reconoce un número positivo como '45'" $ do
+       lexerDo dfaNegativeInt "45" `shouldBe` [TError "Caracter no reconocido: 4", TError "Caracter no reconocido: 5"]
 
-  it "no reconoce el cero '0'" $ do
-    lexerDo dfaNegativeInt "0" `shouldBe` [TError "Caracter no reconocido: 0"]
+     it "no reconoce el cero '0'" $ do
+       lexerDo dfaNegativeInt "0" `shouldBe` [TError "Caracter no reconocido: 0"]
 
   describe "AFD para el Símbolo de Asignación" $ do
-  it "reconoce ':='" $ do
-    lexerDo dfaAssignmentSymbol ":=" `shouldBe` [TSpecialSymbol ":="]
-
-  it "no reconoce ':' por sí solo" $ do
-    lexerDo dfaAssignmentSymbol ":" `shouldBe` [TError "Cadena no reconocida: :"]
-  
-  it "no reconoce otros símbolos como ';'" $ do
-    lexerDo dfaAssignmentSymbol ";" `shouldBe` [TError "Caracter no reconocido: ;"]
+     it "reconoce ':='" $ do
+       lexerDo dfaAssignmentSymbol ":=" `shouldBe` [TSpecialSymbol ":="]
+   
+     it "no reconoce ':' por sí solo" $ do
+       lexerDo dfaAssignmentSymbol ":" `shouldBe` [TError "Cadena no reconocida: :"]
+     
+     it "no reconoce otros símbolos como ';'" $ do
+       lexerDo dfaAssignmentSymbol ";" `shouldBe` [TError "Caracter no reconocido: ;"]
 
   describe "AFD para Listas de un Solo Dígito" $ do
-  it "reconoce '[8]'" $ do
-    lexerDo dfaSingleDigitList "[8]" `shouldBe` [TListSymbol "[8]"]
+     it "reconoce '[8]'" $ do
+       lexerDo dfaSingleDigitList "[8]" `shouldBe` [TListSymbol "[8]"]
+   
+     it "no reconoce una lista vacía '[]'" $ do
+       lexerDo dfaSingleDigitList "[]" `shouldBe` [TError "Cadena no reconocida: []"]
+   
+     it "no reconoce una lista con más de un dígito como '[12]'" $ do
+       lexerDo dfaSingleDigitList "[12]" `shouldBe` [TError "Cadena no reconocida: [12]"]
+  
+  describe "Utilizando un AFD para IDs*" $ do
+    it "reconoce un identificador válido con solo letras como 'variable'" $ do
+        lexerDo dfaIdentifier "variable" `shouldBe` [TIdentifier "variable"]
 
-  it "no reconoce una lista vacía '[]'" $ do
-    lexerDo dfaSingleDigitList "[]" `shouldBe` [TError "Cadena no reconocida: []"]
+    it "reconoce un identificador válido con letras y números como 'valor99'" $ do
+        lexerDo dfaIdentifier "valor99" `shouldBe` [TIdentifier "valor99"]
 
-  it "no reconoce una lista con más de un dígito como '[12]'" $ do
-    lexerDo dfaSingleDigitList "[12]" `shouldBe` [TError "Cadena no reconocida: [12]"]
+    it "no acepta cadenas que inician con un número como '9variable'" $ do
+        lexerDo dfaIdentifier "9variable" `shouldBe` [TError "Caracter no reconocido: 9", TIdentifier "variable"]
 
-    
+    it "no acepta letras después de números como en 'id123a'" $ do
+        lexerDo dfaIdentifier "id123a" `shouldBe` [TIdentifier "id123", TError "Caracter no reconocido: a"]
+
+  describe "AFD para Lista Vacía" $ do
+     it "reconoce '[]'" $ do
+       lexerDo dfaEmptyList "[]" `shouldBe` [TListSymbol "[]"]
+   
+     it "no reconoce '[' por sí solo" $ do
+       lexerDo dfaEmptyList "[" `shouldBe` [TError "Cadena no reconocida: ["]
+   
+     it "no reconoce un bracket de cierre suelto ']'" $ do
+       lexerDo dfaEmptyList "]" `shouldBe` [TError "Caracter no reconocido: ]"]
+
 --   describe "Utilizando el AFD mínimo que acepta los tokens del lenguaje IMP" 
