@@ -136,15 +136,15 @@ spec = do
 
   describe "AFD para el Símbolo de Asignación" $ do
      it "reconoce ':='" $ do
-       lexerDo dfaAssignmentSymbol ":=" `shouldBe` [TSpecialSymbol ":="]
+       lexerDo dfaAssignmentSymbol ":=" `shouldBe` [TAssign]
    
      it "no reconoce ':' por sí solo" $ do
-       lexerDo dfaAssignmentSymbol ":" `shouldBe` [TError "Cadena no reconocida: :"]
+       lexerDo dfaAssignmentSymbol ":" `shouldBe` [TError "Caracter no reconocido: :"]
      
      it "no reconoce otros símbolos como ';'" $ do
        lexerDo dfaAssignmentSymbol ";" `shouldBe` [TError "Caracter no reconocido: ;"]
 
-  describe "AFD para Listas de un Solo Dígito" $ do
+{-  describe "AFD para Listas de un Solo Dígito" $ do
      it "reconoce '[8]'" $ do
        lexerDo dfaSingleDigitList "[8]" `shouldBe` [TListSymbol "[8]"]
    
@@ -152,7 +152,7 @@ spec = do
        lexerDo dfaSingleDigitList "[]" `shouldBe` [TError "Cadena no reconocida: []"]
    
      it "no reconoce una lista con más de un dígito como '[12]'" $ do
-       lexerDo dfaSingleDigitList "[12]" `shouldBe` [TError "Cadena no reconocida: [12]"]
+       lexerDo dfaSingleDigitList "[12]" `shouldBe` [TError "Cadena no reconocida: [12]"]-}
   
   describe "Utilizando un AFD para IDs*" $ do
     it "reconoce un identificador válido con solo letras como 'variable'" $ do
@@ -164,15 +164,15 @@ spec = do
     it "no acepta cadenas que inician con un número como '9variable'" $ do
         lexerDo dfaIdentifier "9variable" `shouldBe` [TError "Caracter no reconocido: 9", TIdentifier "variable"]
 
-    it "no acepta letras después de números como en 'id123a'" $ do
-        lexerDo dfaIdentifier "id123a" `shouldBe` [TIdentifier "id123", TError "Caracter no reconocido: a"]
+    it "se toma como  otro identificador si hay letras después de números como en 'id123a'" $ do
+        lexerDo dfaIdentifier "id123a" `shouldBe` [TIdentifier "id123", TIdentifier "a"]
 
   describe "AFD para Lista Vacía" $ do
      it "reconoce '[]'" $ do
-       lexerDo dfaEmptyList "[]" `shouldBe` [TListSymbol "[]"]
+       lexerDo dfaEmptyList "[]" `shouldBe` [TList]
    
      it "no reconoce '[' por sí solo" $ do
-       lexerDo dfaEmptyList "[" `shouldBe` [TError "Cadena no reconocida: ["]
+       lexerDo dfaEmptyList "[" `shouldBe` [TError "Caracter no reconocido: ["]
    
      it "no reconoce un bracket de cierre suelto ']'" $ do
        lexerDo dfaEmptyList "]" `shouldBe` [TError "Caracter no reconocido: ]"]

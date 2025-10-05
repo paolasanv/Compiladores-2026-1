@@ -20,7 +20,7 @@ data TokenIMP = TIdentifier String
               | TMinus
               | TEqual
               | TLeq
-              | TTNot
+              | TNot
               | TAnd
               | TSkip
               | TIf
@@ -80,7 +80,7 @@ tokenizeLexeme lexeme =
         "-"     -> TMinus
         "="     -> TEqual
         "<="    -> TLeq
-        "not"   -> TTNot
+        "not"   -> TNot
         "and"   -> TAnd
         "skip"  -> TSkip
         "if"    -> TIf
