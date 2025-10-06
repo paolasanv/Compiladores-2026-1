@@ -45,6 +45,6 @@ lexerRegex (a:xs)
     | a == '|'  = UnionS : lexerRegex xs
     | a == '*'  = KleeneS : lexerRegex xs
 lexerRegex (a:xs)
-    | a `elem` ['+','-',':','[',']',';','=','≤','<','>','!', '"', '#', '$', '%', '&', ',', '/', '\\', '|', '{', '}', '?', '@', '^', '_', '`', '~'] 
+    | a `elem` ['+','-',':','[',']',';','=','≤','<','>','!', '"', '#', '$', '%', '&', ',', '/', '\\', '{', '}', '?', '@', '^', '_', '`', '~'] 
         = CharacterS a : lexerRegex xs
 lexerRegex (_:xs) = lexerRegex xs
