@@ -8,11 +8,14 @@ la cuál es encargada de realizar el análisis léxico de una cadena de entrada.
 -}
 module MDD where
 
-import Automatas.NFA_E (State)
-import Automatas.DFA (DFA(..), transitions)
+import Automatas.NFA_E (State, toNFAE)
+import Automatas.NFA (toNFA)
+import Automatas.DFA (DFA(..), transitions, toDFA)
+import Automatas.DFA_min (minimize)
 import qualified Data.Set as Set
 import Data.Maybe (listToMaybe)
 import Text.Read (readMaybe)
+import Regex.Parser
 
 data TokenIMP = TIdentifier String
               | TNumber Int
@@ -36,6 +39,15 @@ data TokenIMP = TIdentifier String
               | TList
               | TError String
               deriving (Show, Eq)
+
+-- Expresión regular de IMP
+regex :: RegEx
+regex = Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Concat (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Character 'a') (Character 'b')) (Character 'c')) (Character 'd')) (Character 'e')) (Character 'f')) (Character 'g')) (Character 'h')) (Character 'i')) (Character 'j')) (Character 'k')) (Character 'l')) (Character 'm')) (Character 'n')) (Character 'o')) (Character 'p')) (Character 'q')) (Character 'r')) (Character 's')) (Character 't')) (Character 'u')) (Character 'v')) (Character 'w')) (Character 'x')) (Character 'y')) (Character 'z')) (Kleene (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Union (Character 'a') (Character 'b')) (Character 'c')) (Character 'd')) (Character 'e')) (Character 'f')) (Character 'g')) (Character 'h')) (Character 'i')) (Character 'j')) (Character 'k')) (Character 'l')) (Character 'm')) (Character 'n')) (Character 'o')) (Character 'p')) (Character 'q')) (Character 'r')) (Character 's')) (Character 't')) (Character 'u')) (Character 'v')) (Character 'w')) (Character 'x')) (Character 'y')) (Character 'z')))) (Character '0')) (Union (Character '-') Epsilon)) (Concat (Union (Union (Union (Union (Union (Union (Union (Union (Character '1') (Character '2')) (Character '3')) (Character '4')) (Character '5')) (Character '6')) (Character '7')) (Character '8')) (Character '9')) (Kleene (Union (Union (Union (Union (Union (Union (Union (Union (Character '1') (Character '2')) (Character '3')) (Character '4')) (Character '5')) (Character '6')) (Character '7')) (Character '8')) (Character '9'))))) (Character '+')) (Character '-')) (Character '=')) (Concat (Character '=') (Character '<'))) (Concat (Concat (Character 'n') (Character 'o')) (Character 't'))) (Concat (Concat (Character 'a') (Character 'n')) (Character 'd'))) (Concat (Concat (Concat (Character 's') (Character 'k')) (Character 'i')) (Character 'p'))) (Concat (Character 'i') (Character 'f'))) (Concat (Concat (Concat (Character 't') (Character 'h')) (Character 'e')) (Character 'n'))) (Concat (Concat (Concat (Character 'e') (Character 'l')) (Character 's')) (Character 'e'))) (Concat (Concat (Concat (Concat (Character 'w') (Character 'h')) (Character 'i')) (Character 'l')) (Character 'e'))) (Concat (Character 'd') (Character 'o'))) (Concat (Concat (Character 'f') (Character 'o')) (Character 'r'))) (Concat (Character 'i') (Character 'n'))) (Concat (Concat (Character 'e') (Character 'n')) (Character 'd'))) (Character ';')) (Concat (Character ':') (Character '='))) (Character ':')) (Concat (Character '[') (Character ']'))
+
+lexerIMP :: String -> [TokenIMP]
+lexerIMP str = lexerDo dfa str
+    where 
+        dfa = minimize $ toDFA $ toNFA $ toNFAE regex
 
 lexerDo :: DFA -> String ->  [TokenIMP]
 lexerDo _ []  = []
