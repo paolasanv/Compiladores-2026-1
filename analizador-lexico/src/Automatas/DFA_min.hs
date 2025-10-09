@@ -1,3 +1,11 @@
+{-|
+Module      : Automatas.DFA_min
+Description : Minimiza un autómata finito determinista.
+Author      : Martinez Mejia Eduardo
+
+Este módulo implementa el algoritmo de minimización de un 
+autómata finito determinista (AFD).
+-}
 module Automatas.DFA_min where
 
 import Automatas.NFA_E (State)
