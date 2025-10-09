@@ -1,23 +1,9 @@
-{-|
-Module      : Automatas.DFA
-Description : Autómatas finitos deterministas minimos.
-
-Este módulo implementa el algoritmo de minimización de un 
-autómata finito determinista (AFD).
--}
 module Automatas.DFA_min where
 
 import Automatas.NFA_E (State)
-import Automatas.DFA (DFA(..), DeltaDFA, alphabet, final, start, states, transitions)
+import Automatas.DFA (DFA(..), DeltaDFA, alphabet, final, start, states, transitions, deltaHat)
 import qualified Data.Set as Set
 import Data.Set (Set)
-<<<<<<< Updated upstream
-
-min :: DFA -> DFA
-min dfa = 
-    let dfa' = deleletInaccessible dfa 
-    in undefined --aqui va el resto del algoritmo
-=======
 import Data.List (partition)
 import Data.Maybe (fromMaybe)
 
@@ -51,12 +37,21 @@ minimize dfa =
         start = newStart,
         final = newFinals
     }
->>>>>>> Stashed changes
 
 
--- Da un nuevo automata con todos sus estados alcanzabes
-deleletInaccessible :: DFA -> DFA
-deleletInaccessible dfa = DFA {
+-- Elige un representante de una clase de equivalencia
+rep :: Set State -> State
+rep c = Set.findMin c  -- Escoge el menor
+
+
+-- Mapea cada estado del Set a su representante de clase
+repMap :: [Set State] -> State -> State
+repMap classes st = rep (head [c | c <- classes, Set.member st c])
+
+
+-- Devuelve un nuevo automata con solo estados alcanzabes
+deleteInaccessible :: DFA -> DFA
+deleteInaccessible dfa = DFA {
     states = newStates,
     alphabet = alphabet dfa,
     transitions = Set.filter (\(p, _, q) -> Set.member p newStates && Set.member q newStates) (transitions dfa) ,
@@ -66,7 +61,7 @@ deleletInaccessible dfa = DFA {
     where 
         newStates =  accessibleStates (transitions dfa)  (start dfa) 
 
--- Calcula los estados alcanzables desde el estado inicial
+-- Calcula los estados alcanzables del automata desde el estado inicial
 accessibleStates ::  Set DeltaDFA  -> State ->  Set State
 accessibleStates trs q0 = accessible trs [q0] Set.empty 
 
@@ -80,11 +75,6 @@ accessible trs (p:xs) acc
     | otherwise = accessible trs ([q | (p', _, q) <- Set.toList trs, p == p'] ++ xs) (Set.insert p acc)
 
 
-<<<<<<< Updated upstream
--- Obtener los estados equivalentes
-equivalenceClasses :: DFA -> [State]
-equivalenceClasses = undefined
-=======
 -- Obtiene las clases de estados equivalentes
 equivalenceClasses :: DFA -> Set (Set State)
 equivalenceClasses dfa = 
@@ -177,9 +167,3 @@ areMarked x y marked = (x, y) `elem` marked || (y, x) `elem` marked
 statesPairsTable :: [State] -> [(State, State)]
 statesPairsTable [] = []
 statesPairsTable (x:xs) = [(x, y) | y <- xs] ++ statesPairsTable xs
-
->>>>>>> Stashed changes
-
-
-
-

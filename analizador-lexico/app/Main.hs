@@ -1,9 +1,7 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Main (main) where
 
-<<<<<<< Updated upstream
-import Regex.ReadFile
-import Automatas.NFA_E(toNFAE)  
-=======
 import System.Console.Haskeline
 import Control.Monad.IO.Class (liftIO)
 import Control.Concurrent (threadDelay, forkIO, MVar, newMVar, modifyMVar_, readMVar)
@@ -98,7 +96,10 @@ repl ref = runInputT defaultSettings loop
       case s of
         ('"':rest) | not (null rest) && last rest == '"' -> init rest
         _ -> s
->>>>>>> Stashed changes
 
 main :: IO ()
-main =  file2RegEx "regex.txt"
+main = do
+  putStrLn "\n======= Analizador Léxico :) =======\n"
+  ref <- newMVar =<< loadRegexFromFile
+  _ <- forkIO $ watchRegexFile ref
+  repl ref
