@@ -26,6 +26,7 @@ dependencies:
 - filepath
 - fsnotify
 - directory
+- haskeline
 - containers
 
 data-files:
@@ -45,10 +46,9 @@ ghc-options:
 library:
   source-dirs: src
   exposed-modules:
-  - Lib
+  - MDD
   - Regex.Parser
   - Regex.Lexer
-  - Regex.ReadFile
   - Automatas.NFA_E
   - Automatas.NFA
   - Automatas.DFA
@@ -77,3 +77,4 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - analizador-lexico
+    - hspec 
