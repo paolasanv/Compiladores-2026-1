@@ -31,9 +31,9 @@ toNFA n = NFA {
     		startNFA = start n,
     		finalNFA = Set.toList oficialFinalStates
 		}
-		where oficialStates = [(start n)] ++ [ x | (q0, c, q1) <- statesDeltaHat, (Set.toList q1) /= [], x <- (Set.toList q1)]
+		where oficialStates = [(start n)] ++ [ x | (q0, c, q1) <- statesDeltaHat, (Set.toList q1) /= [], (toChar c) /= ' ', x <- (Set.toList q1)]
 		      oficialFinalStates = Set.fromList [ x | x <- oficialStates, elem (final n) (Set.toList (stateEclosure x (transitions n)))]
-		      oficialTransitions = [(q0, (toChar c), (Set.toList q1)) | (q0, c, q1) <- statesDeltaHat, q <- oficialStates, (Set.toList q1) /= [], q0 == q]
+		      oficialTransitions = [(q0, (toChar c), (Set.toList q1)) | (q0, c, q1) <- statesDeltaHat, q <- oficialStates, (Set.toList q1) /= [], q0 == q, (toChar c) /= ' ']
 		      statesDeltaHat = nfaEdeltaHat n
 		      oficialAlphabet = [ c | Just c <- Set.toList (alphabet n)]
 
