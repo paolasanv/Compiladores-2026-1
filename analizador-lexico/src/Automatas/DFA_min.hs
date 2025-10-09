@@ -13,6 +13,8 @@ import Automatas.DFA (DFA(..), DeltaDFA, alphabet, final, start, states, transit
 import qualified Data.Set as Set
 import Data.Set (Set)
 import Data.List (partition)
+import Data.Maybe (fromMaybe)
+
 
 minimize :: DFA -> DFA
 minimize dfa = 
@@ -34,7 +36,7 @@ minimize dfa =
             | c <- classes
             , p <- Set.toList c
             , a <- Set.toList (alphabet dfa')
-            , let q = deltaHat dfa' p a
+            , let q = fromMaybe p (deltaHat dfa' p a)
             ]
     in DFA {
         states = newStates,
@@ -155,7 +157,10 @@ step2 dfa marked =
 checkStatesPairs :: DFA -> [(State, State)] -> (State, State) -> [(State, State)]
 checkStatesPairs dfa marked (st1, st2)
     | (st1, st2) `elem` marked || (st2, st1) `elem` marked = marked 
-    | any (\a -> areMarked (deltaHat dfa st1 a) (deltaHat dfa st2 a) marked)
+    | any (\a ->
+        let q1 = fromMaybe st1 (deltaHat dfa st1 a)
+            q2 = fromMaybe st2 (deltaHat dfa st2 a)
+        in areMarked q1 q2 marked)
         (Set.toList (alphabet dfa)) =
             (st1, st2) : marked
     | otherwise = marked
@@ -170,8 +175,3 @@ areMarked x y marked = (x, y) `elem` marked || (y, x) `elem` marked
 statesPairsTable :: [State] -> [(State, State)]
 statesPairsTable [] = []
 statesPairsTable (x:xs) = [(x, y) | y <- xs] ++ statesPairsTable xs
-
-
-
-
-

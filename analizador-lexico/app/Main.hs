@@ -83,8 +83,8 @@ repl ref = runInputT defaultSettings loop
                 putStrLn "[Ejecución] Usando expresión regular actual:"
                 print regex
                 putStrLn $ "lexer se llama con: " ++ args
-                --let afd = minimize $ toDFA $ toNFA $ toNFAE regex
-                --print (lexerDo afd args)
+                let afd = minimize $ toDFA $ toNFA $ toNFAE regex
+                print (lexerDo afd args)
               loop
             else do
               liftIO $ putStrLn $ "Comando desconocido: " ++ xs
