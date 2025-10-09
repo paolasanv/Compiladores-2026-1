@@ -80,9 +80,9 @@ repl ref = runInputT defaultSettings loop
               let args = stripQuotes rawArgs
               regex <- liftIO $ readMVar ref
               liftIO $ do
-                putStrLn "[Ejecución] Usando expresión regular actual:"
-                print regex
-                putStrLn $ "lexer se llama con: " ++ args
+                --putStrLn "[Ejecución] Usando expresión regular actual:"
+                --print regex
+                --putStrLn $ "lexer se llama con: " ++ args
                 let afd = minimize $ toDFA $ toNFA $ toNFAE regex
                 print (lexerDo afd args)
               loop
