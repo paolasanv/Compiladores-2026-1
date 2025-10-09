@@ -3,12 +3,12 @@ Module      : Automatas.NFA
 Description : Autómatas finitos no deterministas.
 
 Este módulo implementa el algoritmo de conversión de un 
-autómata finito no determinista con transitions épsilon (AFN-ε)
+autómata finito no determinista con transiciones épsilon (AFN-ε)
 a un autómata finitos no determinista (AFN).
 -}
 module Automatas.NFA where
 
-import Automatas.NFA_E (NFAE, State, Delta, Symbol, transitions, alphabet, states)
+import Automatas.NFA_E (NFAE, State, Delta, Symbol, transitions, alphabet, states, start, final)
 import qualified Data.Set as Set
 import Data.Set (Set)
 
@@ -23,7 +23,22 @@ data NFA = NFA {
 }deriving (Show)
 
 toNFA :: NFAE -> NFA
-toNFA = undefined
+toNFA n = NFA {
+		statesNFA = Set.fromList oficialStates,
+    		alphabetNFA = Set.fromList oficialAlphabet,
+    		transitionsNFA = Set.fromList oficialTransitions,
+    		startNFA = start n,
+    		finalNFA = Set.toList oficialFinalStates
+		}
+		where oficialStates = [(start n)] ++ [ x | (q0, c, q1) <- statesDeltaHat, (Set.toList q1) /= [], (toChar c) /= ' ', x <- (Set.toList q1)]
+		      oficialFinalStates = Set.fromList [ x | x <- oficialStates, elem (final n) (Set.toList (stateEclosure x (transitions n)))]
+		      oficialTransitions = [(q0, (toChar c), (Set.toList q1)) | (q0, c, q1) <- statesDeltaHat, q <- oficialStates, (Set.toList q1) /= [], q0 == q, (toChar c) /= ' ']
+		      statesDeltaHat = nfaEdeltaHat n
+		      oficialAlphabet = [ c | Just c <- Set.toList (alphabet n)]
+
+toChar :: Maybe Char -> Char
+toChar Nothing = ' '
+toChar (Just c) = c
 
 -- ε-closure(q) = { p | δ(q, ε) =  p }
 stateEclosure :: State -> Set Delta -> Set State
@@ -52,4 +67,3 @@ doDeltaHatAux q c (x:xs) = case x of
 
 nfaEdeltaHat :: NFAE -> [(State, Maybe Char, Set State)]
 nfaEdeltaHat nfae = [(x, y, deltaHat x y (transitions nfae) ) | x <- Set.toList (states nfae), y <- Set.toList (alphabet nfae)]
---nfaEdeltaHat nfae = [(x, Nothing ,stateEclosure x (transitions nfae)) | x <- Set.toList (states nfae)]
