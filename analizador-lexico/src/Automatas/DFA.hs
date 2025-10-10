@@ -1,7 +1,7 @@
 {-|
 Module      : Automatas.DFA
 Description : Autómatas finitos deterministas.
-Author: Paola Mildred Martinez Hidalgo.
+Author      : Paola Mildred Martinez Hidalgo.
 
 Este módulo implementa el algoritmo de conversión de un 
 autómata finito no determinista (AFN) a un autómata finitos determinista (AFD).
@@ -53,31 +53,38 @@ toDFA nfa =
                 delta' = foldr (\(a,s) acc -> Map.insert (actual,a) s acc) delta movimientos -- actualiza las transiciones
             in build (cola ++ nuevos) (Set.union visitados (Set.fromList nuevos)) delta'
 
-        -- Cada conjunto de estados del NFA se representa por el estado mínimo del conjunto.
-        representative :: Set State -> State
-        representative s = Set.findMin s
-
+        -- Ejecutar la construcción
         (allStates, deltaMap) = build [startSet] (Set.singleton startSet) Map.empty
 
-        -- Convierte el Map de transiciones en un Set DeltaDFA
+        -- Asignar IDs únicos (Int) a cada conjunto de estados empezando desde el 0
+        stateIDs :: Map.Map (Set State) State
+        stateIDs = Map.fromList $ zip (Set.toList allStates) [0..]
+
+        -- Generar las transiciones del DFA
         deltaDFA = Set.fromList
-          [ (representative qSet, a, representative qSet')
-          | ((qSet,a), qSet') <- Map.toList deltaMap
+          [ (idOf qSet, a, idOf qSet')
+          | ((qSet, a), qSet') <- Map.toList deltaMap
           ]
+          where
+          idOf s = fromMaybe (error "Estado faltante)") (Map.lookup s stateIDs)
+
 
         -- Calcula los estados finales del DFA, es final si contiene un estado final del NFA 
-        finals = [ representative s
-                 | s <- Set.toList allStates
-                 , any (`elem` finalNFA nfa) (Set.toList s)
-                 ]
-    -- Construye el DFA final 
-    in DFA {
-        states = Set.map representative allStates,
-        alphabet = alphabetNFA nfa,
-        transitions = deltaDFA,
-        start = representative startSet,
-        final = finals
-    }
+        finals :: [State]
+        finals =
+          [ stateIDs Map.! s
+          | s <- Set.toList allStates
+          , any (`elem` finalNFA nfa) (Set.toList s)
+          ]
+
+  -- Construye el DFA final 
+  in DFA
+       { states = Set.fromList (Map.elems stateIDs),
+       , alphabet = alphabetNFA nfa
+       , transitions = deltaDFA
+       , start = stateIDs Map.! startSet
+       , final = finals
+       }
 
 -- Transición extendida de un DFA
 deltaHat :: DFA -> State -> Char -> Maybe State
