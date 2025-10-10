@@ -17,34 +17,53 @@ import Data.Maybe (fromMaybe)
 
 
 minimize :: DFA -> DFA
-minimize dfa = 
-    let dfa'      = deleteInaccessible dfa 
+minimize dfa =
+  let cleaned    = deleteInaccessible dfa
+      completed  = ensureTrap cleaned
         -- Clases de estados equivalentes
-        classes   = Set.toList (equivalenceClasses dfa')
+      classes   = Set.toList (equivalenceClasses completed)
         -- Mapear estados a su clase
-        repState c     = Set.findMin c
-        repStateMap    = \st -> head [repState c | c <- classes, Set.member st c]
+      repState c     = Set.findMin c
+      repStateMap    = \st -> head [repState c | c <- classes, Set.member st c]
         -- Nuevos estados
-        newStates = Set.fromList (map repState classes)
+      newStates = Set.fromList (map repState classes)
         -- Estado inicial
-        newStart  = repStateMap (start dfa')
+      newStart  = repStateMap (start completed)
         -- Estados finales
-        newFinals = [repState c | c <- classes, any (`elem` final dfa') (Set.toList c)]
+      newFinals = [repState c | c <- classes, any (`elem` final completed) (Set.toList c)]
         -- Transiciones
-        newTrans  = Set.fromList
+      newTrans  = Set.fromList
             [ (repState c, a, repStateMap q)
             | c <- classes
             , p <- Set.toList c
-            , a <- Set.toList (alphabet dfa')
-            , let q = fromMaybe p (deltaHat dfa' p a)
+            , a <- Set.toList (alphabet completed)
+            , let q = fromMaybe p (deltaHat completed p a)
             ]
     in DFA {
         states = newStates,
-        alphabet = alphabet dfa',
+        alphabet = alphabet completed,
         transitions = newTrans,
         start = newStart,
         final = newFinals
     }
+
+-- introducir un estado trampa explícito y usarlo cuando no existe transición.
+ensureTrap :: DFA -> DFA
+ensureTrap dfa =
+  let trap = maximum (states dfa) + 1
+      existing = transitions dfa
+      missing =
+        [ (p, a, trap)
+        | p <- Set.toList (states dfa)
+        , a <- Set.toList (alphabet dfa)
+        , notElem (p, a) [(x, b) | (x, b, _) <- Set.toList existing]
+        ]
+      trapTransitions = [(trap, a, trap) | a <- Set.toList (alphabet dfa)]
+      newStates = if null missing then states dfa else Set.insert trap (states dfa)
+  in dfa {
+      states = newStates,
+      transitions = existing `Set.union` Set.fromList (missing ++ trapTransitions)
+  }
 
 
 -- Elige un representante de una clase de equivalencia
