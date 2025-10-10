@@ -3,95 +3,109 @@
 module Main (main) where
 
 import System.Console.Haskeline
+import Control.Monad.IO.Class (liftIO)
+import Control.Concurrent (threadDelay, forkIO, MVar, newMVar, modifyMVar_, readMVar)
+import Control.Monad (forever, void)
 
 import Regex.Lexer
 import Regex.Parser
+import MDD (lexerDo)
+import Automatas.NFA_E (toNFAE)
+import Automatas.NFA (toNFA)
+import Automatas.DFA (DFA, toDFA)
+import Automatas.DFA_min (minimize)
 
 import Data.List (intercalate, isPrefixOf)
 import System.FSNotify
 import System.FilePath (takeFileName, takeDirectory)
-import Control.Concurrent (threadDelay, forkIO)
-import Control.Monad (forever, void)
 import qualified Data.Text as T
-import qualified Data.Text.IO as TIO
+import qualified Data.Text.IO as T
 import Paths_analizador_lexico (getDataFileName)
 import System.Directory (doesFileExist)
 
-{-
-            Lexer Real
-regex :: T.Text  -> RegEx
-regex content = toRegex (text2String content) 
-
-lexerIMP ::  String -> [TokenIMP]
-lexerIMP input = lexerDo (minimize $ toDFA $ toNFA $ toNFAE regex) input 
--}
-
-
--- Simulación del lexer 
-lexerMain :: String -> [String]
-lexerMain input = ["llamada", "a", "lexer", "con", input]
-
--- De cadena a RegEx
-toRegex :: String -> RegEx 
+-- Convierte texto a expresión regular
+toRegex :: String -> RegEx
 toRegex x = parser $ lexer x
 
--- Convierte archivo de texto en string separado por |
+-- Convierte texto a String con separador |
 text2String :: T.Text -> String
 text2String content = intercalate " | " (map T.unpack (T.lines content))
 
--- Cargar y convertir archivo a RegEx
-loadRegexFromFile :: FilePath -> IO RegEx
-loadRegexFromFile path = do
-    content <- TIO.readFile path
-    putStrLn "Expresión regular actualizada desde el archivo."
-    let regex = toRegex (text2String content)
-    putStrLn $ show regex
-    return regex
+-- Cargar y parsear el archivo regex.txt como expresión regular
+loadRegexFromFile :: IO RegEx
+loadRegexFromFile = do
+   existeLocal <- doesFileExist "regex.txt"
+   ruta <- if existeLocal then return "regex.txt" else getDataFileName "regex.txt"
+   contenido <- T.readFile ruta
+   let regex = toRegex (text2String contenido)
+   putStrLn $ "[Actualización] Expresión regular cargada: " ++ show regex
+   return regex
 
--- Vigilar cambios en el archivo de expresiones regulares
-watchRegexFile :: FilePath -> (RegEx -> IO ()) -> IO ()
-watchRegexFile filename onUpdate = withManager $ \mgr -> do
-    existeLocal <- doesFileExist filename
-    ruta <- if existeLocal then return filename else getDataFileName filename
-    let carpeta = takeDirectory ruta
-    let archivo = takeFileName ruta
+-- Construye un DFA mínimo desde una expresión regular
+toDFAmin :: RegEx -> DFA
+toDFAmin = minimize . toDFA . toNFA . toNFAE
 
-    -- Ejecutar la primera vez
-    void $ onUpdate =<< loadRegexFromFile ruta
 
-    void $ watchDir
-        mgr
-        carpeta
-        (\e -> case e of
-            Modified path _ _ -> takeFileName path == archivo
-            _ -> False)
-        (\_ -> do
-            putStrLn $ "Cambio detectado en " ++ archivo
-            void $ onUpdate =<< loadRegexFromFile ruta)
+-- Vigilar el archivo regex.txt y actualizar el MVar con el nuevo DFA
+watchRegexFile :: MVar DFA -> IO ()
+watchRegexFile ref = withManager $ \mgr -> do
+   existeLocal <- doesFileExist "regex.txt"
+   ruta <- if existeLocal then return "regex.txt" else getDataFileName "regex.txt"
+   let carpeta = takeDirectory ruta
+   let archivo = takeFileName ruta
 
-    putStrLn $ "Observando " ++ archivo ++ " por cambios..."
-    forever $ threadDelay 1000000 
+   void $ watchDir
+       mgr
+       carpeta
+       (\e -> case e of
+           Modified path _ _ -> takeFileName path == archivo
+           _ -> False)
+       (\_ -> do
+           putStrLn $ "\n[FSNotify] Cambio detectado en " ++ archivo
+           regex' <- loadRegexFromFile
+           let afd' = toDFAmin regex'
+           modifyMVar_ ref (const (return afd'))
+       )
 
--- loop del REPL
-replLoop :: InputT IO ()
-replLoop = do
-    minput <- getInputLine ">> "
-    case minput of
-      Nothing   -> return ()
-      Just ""   -> replLoop
-      Just ":q" -> outputStrLn "Chao ;)" >> return ()
-      Just xs 
-        | "lexer" `isPrefixOf` xs -> do
-            let args = drop 6 xs
-            outputStrLn $ show $ lexerMain args
-            replLoop
-        | otherwise -> do
-            outputStrLn $ "Comando desconocido: " ++ xs
-            replLoop
+   forever $ threadDelay 1000000
 
--- main
+repl :: MVar DFA -> IO ()
+repl ref = runInputT defaultSettings loop
+ where
+   loop :: InputT IO ()
+   loop = do
+     minput <- getInputLine "> "
+     case minput of
+       Nothing -> return ()
+       Just "" -> loop
+       Just ":q" -> liftIO $ putStrLn "Chao :)"
+       Just xs ->
+         if take 5 xs == "lexer"
+           then do
+             let rawArgs = drop 6 xs
+             let args = stripQuotes rawArgs
+             afd <- liftIO $ readMVar ref
+             liftIO $ print (lexerDo afd args)
+             loop
+           else do
+             liftIO $ putStrLn $ "Comando desconocido: " ++ xs
+             loop
+
+   -- Elimina comillas dobles al inicio y final, si existen
+   stripQuotes :: String -> String
+   stripQuotes s =
+     case s of
+       ('"':rest) | not (null rest) && last rest == '"' -> init rest
+       _ -> s
+
+
 main :: IO ()
 main = do
-    putStrLn "\n ===== Analizador Léxico para IMP :) ====== "
-    _ <- forkIO $ watchRegexFile "regex.txt" (\_ -> return ())
-    runInputT defaultSettings replLoop
+ putStrLn "\n======= Analizador Léxico :) =======\n"
+ -- Cargar regex inicial y generar AFD mínimo
+ regex <- loadRegexFromFile
+ ref <- newMVar (toDFAmin regex)
+  -- Lanzar observador de archivos en un hilo separado
+ _ <- forkIO $ watchRegexFile ref
+  -- Iniciar REPL
+ repl ref

@@ -26,7 +26,6 @@ r₁ | r₂ | r₃ | ... | rₙ
 
 	```
 
-	Se interpreta como la expresión regular ∅.
 
 2. Cadena vacía (ε):
 
@@ -36,8 +35,6 @@ r₁ | r₂ | r₃ | ... | rₙ
 
 	' '
 	```
-
-	Se interpreta como la expresión regular ε.
 
 
 3. Operadores válidos:

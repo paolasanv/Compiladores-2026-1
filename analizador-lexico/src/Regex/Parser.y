@@ -21,7 +21,7 @@ import Data.List
 
 %%
 
--- Símbolo inicial
+-- Símbolo start
 RegEx :: { RegEx }
 RegEx : R              { $1 }
 

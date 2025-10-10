@@ -35,14 +35,16 @@ stack run
   stack run
   ```
 
-3. Llamar a la función _lexer_ con una cadena SIN comillas. Ejemplo: 
+3. Llamar a la función _lexer_ con una cadena (con o sin comillas). Ejemplo: 
 
   ```bash
   $ stack build
   $ stack run
   Analizador Léxico :) 
-  > Observando regex.txt por cambios... 
+  [Actualización] Expresión regular actualizada.
   > lexer 3 + 4
+  [TNum 3, TAdd, TNum 4]
+  > lexer "3 + 4"
   [TNum 3, TAdd, TNum 4]
   ```
 
@@ -54,11 +56,12 @@ stack run
   $ stack build
   $ stack run
   Analizador Léxico :) 
-  > Observando regex.txt por cambios... 
+  [Actualización] Expresión regular actualizada.
   > lexer 3 + 4
   [TNum 3, TAdd, TNum 4]
-  > Archivo de texto actualizado 
-  > Observando regex.txt por cambios... 
+
+  Cambio detectado en regex.txt
+  [Actualización] Expresión regular actualizada.
   > lexer 3 + 4
   [TError, TError, TError]
   ```
@@ -69,17 +72,33 @@ stack run
   $ stack build
   $ stack run
   Analizador Léxico :) 
-  > Observando regex.txt por cambios... 
+  [Actualización] Expresión regular actualizada.
   > lexer 3 + 4
   [TNum 3, TAdd, TNum 4]
-  > Archivo de texto actualizado 
-  > Observando regex.txt por cambios... 
+
+  Cambio detectado en regex.txt
+  [Actualización] Expresión regular actualizada.
   > lexer 3 + 4
   [TError, TError, TError]
   >:q
   Chao ;)
   ```
+## Uso alternativo 
+
+Es posible utilizar ghci para probar el programa con la expresión regular completa de IMP. En este contexto, las modificaciones hechas en el archivo de texto no influyen en el uso del analizador léxico (en este caso, la función se llama _lexerIMP_).
+
+Ejemplo:
+
+  ```bash
+  $ stack ghci
+  ghci> lexerIMP "2+3"
+  [TNum 2, TPlus, TNum 3]
+  ```
 
 ## Pruebas 
 
-Se proveen casos de prueba dentro de analizador-lexico/test
+Se proveen casos de prueba dentro de analizador-lexico/test. Para verlas escribir:
+
+  ```bash
+  $ stack test
+  ```
