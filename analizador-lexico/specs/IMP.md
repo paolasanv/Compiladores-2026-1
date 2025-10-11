@@ -32,7 +32,7 @@ r₁ | r₂ | r₃ | ... | rₙ
 	Representada por un los símbolos '?e'. Ejemplo:
 
 	```bash
-	'?e'
+	?e
 	```
 
 	Esta representación funciona para cualquier sistema operativo, en el caso usar Linux tambien puede usar el símbolo unicode ε como como la cadena vacía. Ejemplo: 
@@ -50,7 +50,7 @@ r₁ | r₂ | r₃ | ... | rₙ
 
 	- Agrupación: ( R )
 
-	- Cerradura de Kleene: R*
+	- Estrella de Kleene: R*
 
 ## Ejemplo
 
