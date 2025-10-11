@@ -79,7 +79,7 @@ toDFA nfa =
 
   -- Construye el DFA final 
   in DFA
-       { states = Set.fromList (Map.elems stateIDs),
+       { states = Set.fromList (Map.elems stateIDs)
        , alphabet = alphabetNFA nfa
        , transitions = deltaDFA
        , start = stateIDs Map.! startSet

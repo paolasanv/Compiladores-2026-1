@@ -36,6 +36,7 @@ lexer x
 lexerRegex :: String -> [Token]
 lexerRegex [] = []
 lexerRegex ('ε':xs) = EpsilonS : lexerRegex xs
+lexerRegex ('?':'e':xs) = EpsilonS : lexerRegex xs
 lexerRegex ('(':xs) = OpenParenthesis : lexerRegex xs
 lexerRegex (')':xs) = CloseParenthesis : lexerRegex xs
 lexerRegex ('.':xs) = ConcatS : lexerRegex xs
