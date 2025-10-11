@@ -29,11 +29,16 @@ r₁ | r₂ | r₃ | ... | rₙ
 
 2. Cadena vacía (ε):
 
-	Representada por un espacio (carácter ' '). Ejemplo:
+	Representada por un los símbolos '?e'. Ejemplo:
 
 	```bash
+	'?e'
+	```
 
-	' '
+	Esta representación funciona para cualquier sistema operativo, en el caso usar Linux tambien puede usar el símbolo unicode ε como como la cadena vacía. Ejemplo: 
+
+	```bash
+	(?e + ε)
 	```
 
 
@@ -46,14 +51,6 @@ r₁ | r₂ | r₃ | ... | rₙ
 	- Agrupación: ( R )
 
 	- Cerradura de Kleene: R*
-
-**Importante: Para usar de la cadena vacía en expresiones inductivas.** 
-
-Cuando la cadena vacía se utiliza dentro de una expresión más compleja (inductiva), debe representarse mediante el símbolo Unicode: ε, es decir, no debe usarse un espacio en este caso. Ejemplo: 
-
-```bash
- (a + ε)
-```
 
 ## Ejemplo
 
