@@ -75,3 +75,7 @@ Que equivale a:
 ```bash
 A* + 1 + a + b + c + for + (a + ε)c
 ```
+
+**Nota:** El archivo de texto puede contener únicamente un salto de línea (la expresión regular del vacío) o una o más expresiones regulares que no incluyan el vacío.
+
+Evite los saltos de línea dentro de las expresiones regulares inductivas, ya que pueden interferir con la construcción de la _RegEx_,resultante de la unión disjunta de las expresiones regulares presentes en el archivo de texto
