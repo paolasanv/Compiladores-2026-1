@@ -15,7 +15,7 @@ import Automatas.NFA (toNFA)
 import Automatas.DFA (DFA, toDFA)
 import Automatas.DFA_min (minimize)
 
-import Data.List (intercalate, isPrefixOf)
+import Data.List (intercalate)
 import System.FSNotify
 import System.FilePath (takeFileName, takeDirectory)
 import qualified Data.Text as T

@@ -1,9 +1,19 @@
+{-|
+Module      : MDDspec
+Description : Casos de prueba
+Author: Leslie P. Sánchez V. y Alejandra Valentina Arias Villarroel
+
+Este módulo pone a prueba la implementación de la máquina discriminadora determinista y el lexer de IMP.
+-}
+
 module MDDspec where
 
 import Test.Hspec ( describe, it, shouldBe, Spec )
 import MDD (lexerDo, TokenIMP (..)) 
 import Automatas.DFA ( DFA(..) )
 import qualified Data.Set as Set
+import MDD (lexerIMP)
+
 
 -- AFD que reconoce enteros positivos 
 dfaPosInt :: DFA
@@ -55,34 +65,17 @@ dfaAssignmentSymbol = DFA {
     final = [2]
 }
 
--- AFD que reconoce listas con un solo dígito dentro, ej: "[7]"
-dfaSingleDigitList :: DFA
-dfaSingleDigitList = DFA {
-    states = Set.fromList [0, 1, 2, 3],
-    alphabet = Set.fromList ('[':']':['0'..'9']),
-    transitions = Set.fromList $
-        (0, '[', 1) :
-        (2, ']', 3) :
-        [ (1, c, 2) | c <- ['0'..'9'] ],
-    start = 0,
-    final = [3]
-}
-
---AFD que reconoce los IDs 
+--AFD que reconoce los identificadores
 dfaIdentifier :: DFA
 dfaIdentifier = DFA {
     states = Set.fromList [0, 1, 2],
-    
     alphabet = Set.fromList (['a'..'z'] ++ ['A'..'Z'] ++ ['1'..'9']),
-    
     transitions = Set.fromList $
         [ (0, c, 1) | c <- ['a'..'z'] ++ ['A'..'Z'] ] ++
         [ (1, c, 1) | c <- ['a'..'z'] ++ ['A'..'Z'] ] ++
         [ (1, c, 2) | c <- ['1'..'9'] ] ++
         [ (2, c, 2) | c <- ['1'..'9'] ],
-        
     start = 0,
-    
     final = [1, 2]
 }
 
@@ -101,7 +94,7 @@ dfaEmptyList = DFA {
 
 spec :: Spec
 spec = do
-  describe "Utilizando un AFD mínimo que solo acepta números enteros positivos" $ do
+  describe "Expresión regular: (1|2|3|4|5|6|7|8|9)(0|1|2|3|4|5|6|7|8|9)*" $ do
     it "reconoce '234' como un número" $ do
       lexerDo dfaPosInt "234" `shouldBe` [TNumber 234]
 
@@ -114,7 +107,7 @@ spec = do
     it "reconoce números independientes separados por espacios como en '1 34 566 3'" $ do
       lexerDo dfaPosInt "1 34 566 3" `shouldBe` [TNumber 1, TNumber 34, TNumber 566, TNumber 3]
 
-  describe "Utilizando un AFD mínimo que solo acepta identificadores alfabéticos en minúsculas" $ do
+  describe "Expresión regular: (a|b|...|z)(a|b|...|z)*" $ do
     it "reconoce 'hola' como identificador" $ do
       lexerDo dfaId "hola" `shouldBe` [TIdentifier "hola"]
 
@@ -124,7 +117,7 @@ spec = do
     it "reconoce una sola letra como en 'a'" $ do
       lexerDo dfaId "a" `shouldBe` [TIdentifier "a"]
         
-  describe "AFD para Números Enteros Negativos" $ do
+  describe "Expresión regular: -((1|2|3|4|5|6|7|8|9)(0|1|2|3|4|5|6|7|8|9)*)" $ do
      it "reconoce '-123' como un número negativo" $ do
        lexerDo dfaNegativeInt "-123" `shouldBe` [TNumber (-123)]
 
@@ -134,7 +127,7 @@ spec = do
      it "no reconoce el cero '0'" $ do
        lexerDo dfaNegativeInt "0" `shouldBe` [TError "Caracter no reconocido: 0"]
 
-  describe "AFD para el Símbolo de Asignación" $ do
+  describe "Expresión regular: := " $ do
      it "reconoce ':='" $ do
        lexerDo dfaAssignmentSymbol ":=" `shouldBe` [TAssign]
    
@@ -144,17 +137,7 @@ spec = do
      it "no reconoce otros símbolos como ';'" $ do
        lexerDo dfaAssignmentSymbol ";" `shouldBe` [TError "Caracter no reconocido: ;"]
 
-{-  describe "AFD para Listas de un Solo Dígito" $ do
-     it "reconoce '[8]'" $ do
-       lexerDo dfaSingleDigitList "[8]" `shouldBe` [TListSymbol "[8]"]
-   
-     it "no reconoce una lista vacía '[]'" $ do
-       lexerDo dfaSingleDigitList "[]" `shouldBe` [TError "Cadena no reconocida: []"]
-   
-     it "no reconoce una lista con más de un dígito como '[12]'" $ do
-       lexerDo dfaSingleDigitList "[12]" `shouldBe` [TError "Cadena no reconocida: [12]"]-}
-  
-  describe "Utilizando un AFD para IDs*" $ do
+  describe "Expresión regular: ([a-zA-Z])([a-zA-Z0-9])*" $ do
     it "reconoce un identificador válido con solo letras como 'variable'" $ do
         lexerDo dfaIdentifier "variable" `shouldBe` [TIdentifier "variable"]
 
@@ -164,10 +147,10 @@ spec = do
     it "no acepta cadenas que inician con un número como '9variable'" $ do
         lexerDo dfaIdentifier "9variable" `shouldBe` [TError "Caracter no reconocido: 9", TIdentifier "variable"]
 
-    it "se toma como  otro identificador si hay letras después de números como en 'id123a'" $ do
+    it "se toma como otro identificador si hay letras después de números como en 'id123a'" $ do
         lexerDo dfaIdentifier "id123a" `shouldBe` [TIdentifier "id123", TIdentifier "a"]
 
-  describe "AFD para Lista Vacía" $ do
+  describe "Expresión regular: \\[\\]" $ do
      it "reconoce '[]'" $ do
        lexerDo dfaEmptyList "[]" `shouldBe` [TList]
    
@@ -177,4 +160,13 @@ spec = do
      it "no reconoce un bracket de cierre suelto ']'" $ do
        lexerDo dfaEmptyList "]" `shouldBe` [TError "Caracter no reconocido: ]"]
 
---   describe "Utilizando el AFD mínimo que acepta los tokens del lenguaje IMP" 
+  describe "Expresión regular: unión de las categorías léxicas de IMP" $ do
+      it "reconoce listas como 1:2:[]" $ do
+        lexerIMP "1:2:[]" `shouldBe` [TNumber 1, TCons, TNumber 2, TCons, TList]
+
+      it "reconoce comandos como if x:=4 then true else false" $ do
+        lexerIMP "if x:=4 then true else false" `shouldBe` [TIf, TIdentifier "x", TAssign, TNumber 4, TThen, TTrue, TElse, TFalse]      
+
+      it "reconoce comandos como skip ; id4 := -45" $ do
+        lexerIMP "skip ; id4 := -45" `shouldBe` [TSkip, TDotAndComa, TIdentifier "id4", TAssign, TNumber (-45)]      
+
