@@ -35,17 +35,17 @@ stack run
   stack run
   ```
 
-3. Llamar a la función _lexer_ con una cadena (con o sin comillas). Ejemplo: 
+3. Llamar a la función _lexer_ con una cadena (con o sin comillas). La primera vez que se use _lexer_ con una nueva expresión regular el programa puede tardar unos minutos para entregar el resultado. Ejemplo: 
 
   ```bash
   $ stack build
   $ stack run
   Analizador Léxico :) 
   [Actualización] Expresión regular actualizada.
-  > lexer 3 + 4
-  [TNum 3, TAdd, TNum 4]
-  > lexer "3 + 4"
-  [TNum 3, TAdd, TNum 4]
+  > lexer 3 + 4                   -- Aquí puede tardar unos minutos
+  [TNum 3, TAdd, TNum 4] 
+  > lexer "3 - 5"                 -- Aquí no 
+  [TNum 3, TMinus, TNum 5]
   ```
 
 4. Sin tener que compilar el programa nuevamente, es posible actualizar el archivo de texto _regex.txt_ y usar _lexer_ con las nuevas expresiones regulares especificadas. 
