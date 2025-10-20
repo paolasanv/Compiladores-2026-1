@@ -33,7 +33,7 @@ data TokenIMP = TIdentifier String
               | TEnd
               | TTrue 
               | TFalse
-              | TDotAndComa
+              | TSemicolon
               | TAssign
               | TCons 
               | TList
@@ -53,7 +53,7 @@ lexerDo dfa w@(x:xs)
     | x `elem` [' ', '\t', '\n'] = lexerDo dfa xs -- Ignorar espacios
     | otherwise =
         case (maximalMunch dfa (start dfa) w "" Nothing) of  -- w como entrada del DFA
-            Just (lexeme, rest) -> tokenizeLexeme lexeme : lexerDo dfa rest 
+            Just (lexeme, rest) -> tokenizeLexeme lexeme : lexerDo dfa rest -- Si se reconoce un lexema se le asigna un token
             Nothing -> TError ("Caracter no reconocido: " ++ [x]) : lexerDo dfa xs 
 
 maximalMunch :: DFA -> State -> String -> String -> Maybe (String, String) -> Maybe (String, String)
@@ -72,7 +72,7 @@ maximalMunch dfa q (wj:ww) substring backtracking =             -- Hay caractere
 --          Si q' no es estado final entonces 
 --             El lexema reconocido hasta ahora es wi...wj pero este aún no es válido, hay que seguir consumiendo caracteres (maximal munch)
             else maximalMunch dfa q' ww (substring ++ [wj]) backtracking
---      Si δ(q, wj) =  ∅ regresa el último token reconocido (si existe) 
+--      Si δ(q, wj) =  ∅ regresa el último lexema reconocido (si existe) 
         Nothing -> backtracking 
 
 -- Verifica si un estado es final
@@ -102,7 +102,7 @@ tokenizeLexeme lexeme =
         "end"   -> TEnd
         "true"  -> TTrue
         "false" -> TFalse
-        ";"     -> TDotAndComa
+        ";"     -> TSemicolon
         ":="    -> TAssign
         ":"     -> TCons 
         "[]"    -> TList

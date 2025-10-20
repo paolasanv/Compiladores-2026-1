@@ -168,5 +168,5 @@ spec = do
         lexerIMP "if x:=4 then true else false" `shouldBe` [TIf, TIdentifier "x", TAssign, TNumber 4, TThen, TTrue, TElse, TFalse]      
 
       it "reconoce comandos como skip ; id4 := -45" $ do
-        lexerIMP "skip ; id4 := -45" `shouldBe` [TSkip, TDotAndComa, TIdentifier "id4", TAssign, TNumber (-45)]      
+        lexerIMP "skip ; id4 := -45" `shouldBe` [TSkip, TSemicolon, TIdentifier "id4", TAssign, TNumber (-45)]      
 

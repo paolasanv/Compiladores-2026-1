@@ -35,7 +35,6 @@ library
       Automatas.DFA
       Automatas.DFA_min
   other-modules:
-      Regex.ReadFile
       Paths_analizador_lexico
   autogen-modules:
       Paths_analizador_lexico
