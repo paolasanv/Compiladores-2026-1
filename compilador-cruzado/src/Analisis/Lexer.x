@@ -31,7 +31,7 @@ tokens :-
   \*                     { \_ -> TMult }
 
   -- Asignación
-  :=                     { \_ -> TAsiga }
+  :=                     { \_ -> TAsigna }
 
   -- Números
   $digit+                { \s -> TNum (read s) }
@@ -53,7 +53,7 @@ data Token
     | TMult
     | TParenAbierto
     | TParenCerrado
-    | TAsiga
+    | TAsigna
     deriving (Show, Eq)
 
 -- Normalizar espacios 

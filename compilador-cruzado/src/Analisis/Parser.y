@@ -22,7 +22,7 @@ import Analisis.Lexer
     '*'     { TMult }
     '('     { TParenAbierto }
     ')'     { TParenCerrado }
-    Asigna  { TAsiga }
+    Asigna  { TAsigna }
 %%
 
 -- Definición de la gramática
@@ -45,8 +45,7 @@ F : '(' E ')'   {$2}
 parseError :: [Token] -> a
 parseError _ = error "Parse error!"
 
-data AS = 
-      Asigna String AS
+data AS =  Asigna String AS
     | Suma AS AS
     | Resta AS AS
     | Mult AS AS

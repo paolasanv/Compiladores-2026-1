@@ -27,9 +27,9 @@ library
   exposed-modules:
       Analisis.Lexer
       Analisis.Parser
+      Lib
       Sintesis.RI
   other-modules:
-      Lib
       Paths_compilador_cruzado
   autogen-modules:
       Paths_compilador_cruzado

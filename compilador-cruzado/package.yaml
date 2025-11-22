@@ -29,14 +29,14 @@ ghc-options:
 - -Widentities
 - -Wincomplete-record-updates
 - -Wincomplete-uni-patterns
-#- -Wmissing-export-lists
+#- -Wmissing-Sentenciaort-lists
 - -Wmissing-home-modules
 - -Wpartial-fields
 - -Wredundant-constraints
 
 library:
   source-dirs: src
-  exposed-modules:
+  Sentenciaosed-modules:
     - Analisis.Lexer
     - Analisis.Parser
     - Sintesis.RI
