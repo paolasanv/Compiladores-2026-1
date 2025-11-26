@@ -1,0 +1,20 @@
+/home/NancydVV/.ghcup/ghc/9.10.2/lib/ghc-9.10.2/lib/x86_64-linux-ghc-9.10.2/rts-1.0.2/include/ghcversion.h:
+  hash: c52a97980facd4ffbe17b1f1eec95b8061f4dbbf4ce69384e851f410cb70dc0a
+? /home/NancydVV/Documentos/Programas/7semetre/Compiladores/Compiladores-2026-1/analizador-lexico/.stack-work/dist/x86_64-linux/ghc-9.10.2/build/analizador-lexico-exe/autogen/Paths_analizador_lexico.hs
+: hash: 015b8302024828acb97992f42d237d9e1606f0d95b39edc8616f0fe6d819f98d
+? /home/NancydVV/Documentos/Programas/7semetre/Compiladores/Compiladores-2026-1/analizador-lexico/.stack-work/dist/x86_64-linux/ghc-9.10.2/build/analizador-lexico-exe/autogen/cabal_macros.h
+: hash: 08cd4c8b654d2758b2b27b72391e937ff0db90a8967e5021a5bedd652431ff24
+/home/NancydVV/Documentos/Programas/7semetre/Compiladores/Compiladores-2026-1/analizador-lexico/CHANGELOG.md:
+  hash: 4fe4d61b0be4bd4f89a78d70fcb18ffdbb17777daf0d43da844a2aac98f1ca29
+/home/NancydVV/Documentos/Programas/7semetre/Compiladores/Compiladores-2026-1/analizador-lexico/README.md:
+  hash: d04f10fdad93a332bff4fa98071f9aa58a9199d2e9c10357c24070c9a7e9b094
+/home/NancydVV/Documentos/Programas/7semetre/Compiladores/Compiladores-2026-1/analizador-lexico/analizador-lexico.cabal:
+  hash: cd25544821f8229e6c96193199ed8c55e3676f931b2d6d4c358faf6638a9aefe
+/home/NancydVV/Documentos/Programas/7semetre/Compiladores/Compiladores-2026-1/analizador-lexico/app/Main.hs:
+  hash: 2fa5bb4f3a8a5d5633f7f96e39e45d8b6f5bb5d6a3c93d3c538fb38504a6511b
+/home/NancydVV/Documentos/Programas/7semetre/Compiladores/Compiladores-2026-1/analizador-lexico/package.yaml:
+  hash: 33df0288df77082d33d361377a8c3ab6be58e650c01017fdd3e4e7a99cccfbc1
+/home/NancydVV/Documentos/Programas/7semetre/Compiladores/Compiladores-2026-1/analizador-lexico/regex.txt:
+  hash: b12116598a8878839d51b77cef7c07d23f6fd5fdaba13f235127b1a55b870757
+/usr/include/stdc-predef.h:
+  hash: cb08cd5d4cc059a90833ac48a284d25016e8d56ded8ad4cd98d8ac59cc5053f3
