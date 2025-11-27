@@ -37,6 +37,13 @@ instance Show InsTresDir where
 generaIns :: AS -> Int -> ([InsTresDir], Operando, Int)
 generaIns (Num i) n = ([], Cons i, n)
 generaIns (Ident s) n = ([], Var s, n)
+generaIns (Uminus e) n =
+    let 
+        (insE, opE, n1) = generaIns e n -- Instrucciones de la expresion
+        t = Temporal n1                 -- Nuevo temporal 
+        instr = InsUnaria t '-' opE     -- Instruccion unaria
+    in
+        (insE ++ [instr], t, n1+1)
 generaIns (Suma i d) n =
     let 
         (insA, opA, n1) = generaIns i n  -- Instrucciones del lado izquierdo
