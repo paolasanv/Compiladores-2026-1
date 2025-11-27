@@ -27,7 +27,6 @@ library
   exposed-modules:
       Analisis.Lexer
       Analisis.Parser
-      Lib
       Sintesis.RI
   other-modules:
       Paths_compilador_cruzado
