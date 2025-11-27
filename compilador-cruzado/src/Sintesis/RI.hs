@@ -75,7 +75,7 @@ generaIns (Asigna i e) n=
     in 
         (insE ++ [instr], Var i, n1)
                         
-representacionI :: AS -> ([InsTresDir], Operando)
-representacionI as = (a,b)
+representacionI :: AS -> [InsTresDir]
+representacionI as = a
     where 
-        (a,b,_) = generaIns as 0
+        (a,_,_) = generaIns as 0
