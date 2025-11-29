@@ -6,7 +6,7 @@ Este módulo implementa una representación intermedia dependiente de la máquin
 El código ensamblador usado es el AT&T 32 bits
 -}
 module Sintesis.RIx32 where
-import Sintesis.RI(representacionI, InsTresDir(InsCopiado, InsUnaria, InsBinaria), Operando(Var, Cons, Temporal))
+import Sintesis.RI(InsTresDir(InsCopiado, InsUnaria, InsBinaria), Operando(Var, Cons, Temporal))
 
 intermedioL :: [Char]
 intermedioL = ['a'..'z']
@@ -24,10 +24,10 @@ data Instx32 = Move Oper Oper
 	     | Sub Oper Oper
 	     | Mult Oper Oper
 instance Show Instx32 where
-    show (Move a b) = "movl "++show a++" "++show b ++";\n"
-    show (Add a b) = "addl "++show a++" "++show b ++";\n"
-    show (Sub a b) = "subl "++show a++" "++show b ++";\n"
-    show (Mult a b) = "imull "++show a++" "++show b ++";\n"
+    show (Move a b) = "movl "++show a++" "++show b ++";"
+    show (Add a b) = "addl "++show a++" "++show b ++";"
+    show (Sub a b) = "subl "++show a++" "++show b ++";"
+    show (Mult a b) = "imull "++show a++" "++show b ++";"
 
 codigoObjetoPrima :: [InsTresDir] -> Int -> [Instx32]
 codigoObjetoPrima [] _ = []

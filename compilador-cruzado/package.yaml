@@ -22,6 +22,7 @@ description:         Please see the README on GitHub at <https://github.com/gith
 dependencies:
 - base >= 4.7 && < 5
 - array
+- haskeline
 
 ghc-options:
 - -Wall
@@ -40,6 +41,7 @@ library:
     - Analisis.Lexer
     - Analisis.Parser
     - Sintesis.RI
+    - Sintesis.RIx32
   build-tools:
     - alex
     - happy
