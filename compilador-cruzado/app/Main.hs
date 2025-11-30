@@ -1,6 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-
 module Main (main) where
 
 import Analisis.Lexer(lexer)
@@ -10,15 +9,17 @@ import Sintesis.RIx32(codigoObjeto, Instx32)
 import System.Console.Haskeline
 import Data.Char (toLower)
 
+-- Definición de las arquitecturas destino soportadas por el compilador cruzado
 data Arquitectura = X32 | Otra deriving (Show, Eq) -- Cambiar 'Otra' por la arquitectura elegida
 
 leerArquitectura :: String -> Maybe Arquitectura
 leerArquitectura s =
     case s of
-        "x32" -> Just X32
+        "32-bits" -> Just X32
         "otra" -> Just Otra
         _     -> Nothing
 
+-- Función principal que simula al compilador cruzado
 compilador :: String -> Arquitectura -> Either [Instx32] [String]
 compilador cadena X32 = Left (codigoObjeto $ representacionI $ parser $ lexer cadena)
 compilador cadena Otra = Right ["codigo arquitectura para x64 aun no implementada"]
@@ -33,14 +34,15 @@ repl = do
         Just xs      -> do
             case words xs of
                 ("compilador":arquitectura:resto) -> do
+                    outputStrLn $ "Compilando para arquitectura: " ++ arquitectura
                     case leerArquitectura (map toLower (stripQuotes arquitectura)) of
-                        Nothing -> outputStrLn "Arquitectura no válida (use x32 o [otra])" >> repl
+                        Nothing -> outputStrLn "Arquitectura no válida (use 32-bits o [otra])" >> repl
                         Just arq -> do
                             let cadena = stripQuotes $ unwords resto
                             let resultado = compilador cadena arq
                             case resultado of
                                 Left inst -> do
-                                    outputStrLn "Sintaxis AT&T como una representación intermedia para una arquitectura de 32 bits " 
+                                    outputStrLn "Lenguaje ensamblador AT&T de 32 bits " 
                                     outputStrLn $ "Código fuente: " ++ cadena 
                                     outputStrLn "Código objeto (simulado):"
                                     mapM_ (outputStrLn . show) inst
@@ -58,7 +60,7 @@ main :: IO ()
 main = do
     putStrLn "\n=======  Compilador cruzado :)  =======\n"
     putStrLn "Uso: compilador <arquitectura> <cadena>"
-    putStrLn "Arquitecturas disponibles: x32 y [otra]\n" -- Cambiar 'Otra' por la arquitectura elegida
+    putStrLn "Arquitecturas disponibles: 32-bits y [otra]\n" -- Cambiar 'Otra' por la arquitectura elegida
     runInputT defaultSettings repl
 
 -- Elimina comillas dobles al inicio y final, si existen

@@ -1,9 +1,11 @@
 {-|
-Module      : Sintesis.RI-x32
-Description : Representación intermedia dependiente de una arquitectura x32 (por el momento, puede variar)
+Module      : Sintesis.RIx32
+Description : Representación intermedia dependiente de una arquitectura x86 de 32 bits
 
 Este módulo implementa una representación intermedia dependiente de la máquina. 
-El código ensamblador usado es el AT&T 32 bits
+El módulo mantiene el nombre de x32 para hacer referencia al tamaño de palabra de 32 bits.
+Se simula código dependiente para arquitectura x86 de 32 bits utilizando el lenguaje ensamblador AT&T de 32 bits
+
 -}
 module Sintesis.RIx32 where
 import Sintesis.RI(InsTresDir(InsCopiado, InsUnaria, InsBinaria), Direccion(Var, Cons, Temporal))

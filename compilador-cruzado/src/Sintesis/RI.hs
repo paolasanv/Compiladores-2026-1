@@ -16,7 +16,7 @@ Donde:
 module Sintesis.RI where
 import Analisis.Parser(AS(..))
 
-data Direccion = Var String    -- Identificadores del codigo fuente
+data Direccion = Var String   -- Identificadores del codigo fuente
     | Cons Int                -- Numeros del codigo fuente
     | Temporal Int            -- Variable temporal generado por el compilador (como t0, t1, ..) 
 instance Show Direccion where
@@ -24,8 +24,8 @@ instance Show Direccion where
     show (Cons i) = show i
     show (Temporal n) = "t" ++ show n
 
-data InsTresDir = InsCopiado Direccion Direccion   -- a = b
-    | InsUnaria Direccion Char Direccion           -- a = op b
+data InsTresDir = InsCopiado Direccion Direccion    -- a = b
+    | InsUnaria Direccion Char Direccion            -- a = op b
     | InsBinaria Direccion Char Direccion Direccion -- a = b op c
 
 instance Show InsTresDir where
@@ -74,7 +74,8 @@ generaIns (Asigna i e) n=
         instr = InsCopiado (Var i) opE  -- Instruccion de copiado
     in 
         (insE ++ [instr], Var i, n1)
-                        
+
+--Función principar que simula la representación intermedia              
 representacionI :: AS -> [InsTresDir]
 representacionI as = a
     where 
