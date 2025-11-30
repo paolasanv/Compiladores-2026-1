@@ -6,7 +6,7 @@ Este módulo implementa una representación intermedia dependiente de la máquin
 El código ensamblador usado es el AT&T 32 bits
 -}
 module Sintesis.RIx32 where
-import Sintesis.RI(InsTresDir(InsCopiado, InsUnaria, InsBinaria), Operando(Var, Cons, Temporal))
+import Sintesis.RI(InsTresDir(InsCopiado, InsUnaria, InsBinaria), Direccion(Var, Cons, Temporal))
 
 intermedioL :: [Char]
 intermedioL = ['a'..'z']
@@ -42,7 +42,7 @@ obtenerR :: Int -> String
 obtenerR i = "e"++[intermedioL !! n]++"x"
 	   where n = mod (i) (length intermedioL)
 
-operador32 :: Operando -> Oper
+operador32 :: Direccion -> Oper
 operador32 (Var s) = Var1 s
 operador32 (Cons i) = Cons1 i
 operador32 (Temporal i) = Registro (obtenerR i)
