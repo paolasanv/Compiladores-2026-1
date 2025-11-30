@@ -34,7 +34,6 @@ repl = do
         Just xs      -> do
             case words xs of
                 ("compilador":arquitectura:resto) -> do
-                    outputStrLn $ "Compilando para arquitectura: " ++ arquitectura
                     case leerArquitectura (map toLower (stripQuotes arquitectura)) of
                         Nothing -> outputStrLn "Arquitectura no válida (use 32-bits o [otra])" >> repl
                         Just arq -> do
