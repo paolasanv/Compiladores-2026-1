@@ -1,12 +1,14 @@
 {-|
-Module      : Sintesis.RI-x32
-Description : Representación intermedia dependiente de una arquitectura x32 (por el momento, puede variar)
+Module      : Sintesis.RIx32
+Description : Representación intermedia dependiente de una arquitectura x86 de 32 bits
 
 Este módulo implementa una representación intermedia dependiente de la máquina. 
-El código ensamblador usado esta basado en el AT&T 32 bits
+El módulo mantiene el nombre de x32 para hacer referencia al tamaño de palabra de 32 bits.
+Se simula código dependiente para arquitectura x86 de 32 bits utilizando el lenguaje ensamblador AT&T de 32 bits
+
 -}
 module Sintesis.RIx32 where
-import Sintesis.RI(representacionI, InsTresDir(InsCopiado, InsUnaria, InsBinaria), Operando(Var, Cons, Temporal))
+import Sintesis.RI(InsTresDir(InsCopiado, InsUnaria, InsBinaria), Direccion(Var, Cons, Temporal))
 
 -- Se declara una lista de letras minúsculas de la 'a' a la 'z' para poder nombrar los distintos registros e%x
 intermedioL :: [Char]
@@ -27,10 +29,10 @@ data Instx32 = Move Oper Oper
 	     | Sub Oper Oper
 	     | Mult Oper Oper
 instance Show Instx32 where
-    show (Move a b) = "movl "++show a++" "++show b ++";\n"
-    show (Add a b) = "addl "++show a++" "++show b ++";\n"
-    show (Sub a b) = "subl "++show a++" "++show b ++";\n"
-    show (Mult a b) = "imull "++show a++" "++show b ++";\n"
+    show (Move a b) = "movl "++show a++" "++show b ++";"
+    show (Add a b) = "addl "++show a++" "++show b ++";"
+    show (Sub a b) = "subl "++show a++" "++show b ++";"
+    show (Mult a b) = "imull "++show a++" "++show b ++";"
 
 -- Función Auxiliar que recibe una lista de representaciones en 3 direcciones y el número de registros usados. Devuelve una lista de operaciones para la arquitectura
 codigoObjetoPrima :: [InsTresDir] -> Int -> [Instx32]

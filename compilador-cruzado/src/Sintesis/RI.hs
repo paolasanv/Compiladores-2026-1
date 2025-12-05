@@ -10,23 +10,23 @@ Utiliza código de tres direcciones. Posibles instrucciones:
     a = b op c  >> Operacion binaria
 
 Donde:
-    > a, b, c son operandos (variables, constantes, temporales)
+    > a, b, c son direcciones (variables, constantes, temporales)
     > op es un operador aritmetico (+, -, *)
 -}
 module Sintesis.RI where
 import Analisis.Parser(AS(..))
 
-data Operando = Var String    -- Identificadores del codigo fuente
+data Direccion = Var String   -- Identificadores del codigo fuente
     | Cons Int                -- Numeros del codigo fuente
     | Temporal Int            -- Variable temporal generado por el compilador (como t0, t1, ..) 
-instance Show Operando where
+instance Show Direccion where
     show (Var s) = s
     show (Cons i) = show i
     show (Temporal n) = "t" ++ show n
 
-data InsTresDir = InsCopiado Operando Operando   -- a = b
-    | InsUnaria Operando Char Operando           -- a = op b
-    | InsBinaria Operando Char Operando Operando -- a = b op c
+data InsTresDir = InsCopiado Direccion Direccion    -- a = b
+    | InsUnaria Direccion Char Direccion            -- a = op b
+    | InsBinaria Direccion Char Direccion Direccion -- a = b op c
 
 instance Show InsTresDir where
     show (InsCopiado a b) = show a ++ " = " ++ show b
@@ -34,9 +34,16 @@ instance Show InsTresDir where
     show (InsBinaria a op b c) = show a ++ " = " ++ show b ++ " " ++ show op ++ " " ++ show c
 
 -- Generación de instrucciones con contador de temporales
-generaIns :: AS -> Int -> ([InsTresDir], Operando, Int)
+generaIns :: AS -> Int -> ([InsTresDir], Direccion, Int)
 generaIns (Num i) n = ([], Cons i, n)
 generaIns (Ident s) n = ([], Var s, n)
+generaIns (Uminus e) n =
+    let 
+        (insE, opE, n1) = generaIns e n -- Instrucciones de la expresion
+        t = Temporal n1                 -- Nuevo temporal 
+        instr = InsUnaria t '-' opE     -- Instruccion unaria
+    in
+        (insE ++ [instr], t, n1+1)
 generaIns (Suma i d) n =
     let 
         (insA, opA, n1) = generaIns i n  -- Instrucciones del lado izquierdo
@@ -67,8 +74,9 @@ generaIns (Asigna i e) n=
         instr = InsCopiado (Var i) opE  -- Instruccion de copiado
     in 
         (insE ++ [instr], Var i, n1)
-                        
-representacionI :: AS -> ([InsTresDir], Operando)
-representacionI as = (a,b)
+
+--Función principar que simula la representación intermedia              
+representacionI :: AS -> [InsTresDir]
+representacionI as = a
     where 
-        (a,b,_) = generaIns as 0
+        (a,_,_) = generaIns as 0
