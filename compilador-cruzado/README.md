@@ -49,7 +49,7 @@ stack run
 
 3. Para utilizar el compilador cruzado basta escribir _compilador [arquitectura] [cadena]_. 
 
-Las arquitecturas dispobibles son _32-bits_ y _ARM64_. 
+Las arquitecturas dispobibles son _ATnT32_ y _ARM64_. 
 
 Ejemplo:
 
@@ -109,7 +109,7 @@ stack ghci
 
 3. Para utilizar el compilador cruzado se debe escribir _compilador [cadena] [arquitectura]_.
 
-Donde _arquitectura_ puede ser X32 o ARM64. 
+Donde _arquitectura_ puede ser ATnT32 o ARM64. 
 
 La salida es una lista de intrucciones dependiente de la arquitectura elegida.
 
