@@ -1,0 +1,80 @@
+name:                analizador-lexico
+version:             0.1.0.0
+github:              "githubuser/analizador-lexico"
+license:             BSD-3-Clause
+author:              "Author name here"
+maintainer:          "example@example.com"
+copyright:           "2025 Author name here"
+
+extra-source-files:
+- README.md
+- CHANGELOG.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/githubuser/analizador-lexico#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- array
+- text
+- filepath
+- fsnotify
+- directory
+- haskeline
+- containers
+
+data-files:
+  - regex.txt
+
+ghc-options:
+- -Wall
+- -Wcompat
+- -Widentities
+- -Wincomplete-record-updates
+- -Wincomplete-uni-patterns
+#- -Wmissing-export-lists
+- -Wmissing-home-modules
+- -Wpartial-fields
+- -Wredundant-constraints
+
+library:
+  source-dirs: src
+  exposed-modules:
+  - MDD
+  - Regex.Parser
+  - Regex.Lexer
+  - Automatas.NFA_E
+  - Automatas.NFA
+  - Automatas.DFA
+  - Automatas.DFA_min
+  build-tools:
+    - happy
+
+executables:
+  analizador-lexico-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - analizador-lexico
+
+tests:
+  analizador-lexico-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - analizador-lexico
+    - hspec 

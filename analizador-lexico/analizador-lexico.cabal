@@ -1,0 +1,100 @@
+cabal-version: 2.2
+
+-- This file has been generated from package.yaml by hpack version 0.38.1.
+--
+-- see: https://github.com/sol/hpack
+
+name:           analizador-lexico
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/githubuser/analizador-lexico#readme>
+homepage:       https://github.com/githubuser/analizador-lexico#readme
+bug-reports:    https://github.com/githubuser/analizador-lexico/issues
+author:         Author name here
+maintainer:     example@example.com
+copyright:      2025 Author name here
+license:        BSD-3-Clause
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    CHANGELOG.md
+data-files:
+    regex.txt
+
+source-repository head
+  type: git
+  location: https://github.com/githubuser/analizador-lexico
+
+library
+  exposed-modules:
+      MDD
+      Regex.Parser
+      Regex.Lexer
+      Automatas.NFA_E
+      Automatas.NFA
+      Automatas.DFA
+      Automatas.DFA_min
+  other-modules:
+      Paths_analizador_lexico
+  autogen-modules:
+      Paths_analizador_lexico
+  hs-source-dirs:
+      src
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  build-tool-depends:
+      happy:happy
+  build-depends:
+      array
+    , base >=4.7 && <5
+    , containers
+    , directory
+    , filepath
+    , fsnotify
+    , haskeline
+    , text
+  default-language: Haskell2010
+
+executable analizador-lexico-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_analizador_lexico
+  autogen-modules:
+      Paths_analizador_lexico
+  hs-source-dirs:
+      app
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      analizador-lexico
+    , array
+    , base >=4.7 && <5
+    , containers
+    , directory
+    , filepath
+    , fsnotify
+    , haskeline
+    , text
+  default-language: Haskell2010
+
+test-suite analizador-lexico-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      MDDspec
+      Paths_analizador_lexico
+  autogen-modules:
+      Paths_analizador_lexico
+  hs-source-dirs:
+      test
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      analizador-lexico
+    , array
+    , base >=4.7 && <5
+    , containers
+    , directory
+    , filepath
+    , fsnotify
+    , haskeline
+    , hspec
+    , text
+  default-language: Haskell2010

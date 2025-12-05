@@ -1,0 +1,94 @@
+{-|
+Module      : Automatas.DFA
+Description : Autómatas finitos deterministas.
+Author      : Paola Mildred Martinez Hidalgo.
+
+Este módulo implementa el algoritmo de conversión de un 
+autómata finito no determinista (AFN) a un autómata finitos determinista (AFD).
+-}
+module Automatas.DFA where
+
+import Automatas.NFA_E (State)
+import Automatas.NFA (NFA(..))
+import qualified Data.Set as Set
+import Data.Set (Set)
+import qualified Data.Map as Map
+import Data.Maybe (fromMaybe)
+
+type DeltaDFA = (State, Char, State)
+
+data DFA = DFA {
+    states      :: Set State,
+    alphabet    :: Set Char,
+    transitions :: Set DeltaDFA, -- δ: Q×Σ→Q
+    start       :: State,
+    final       :: [State]
+} deriving (Show)
+
+-- Construye un DFA a partir de un NFA (sin ε-transitions)
+toDFA :: NFA -> DFA
+toDFA nfa =
+    let
+        -- Se mantiene el estado inicial del NFA
+        startSet = Set.singleton (startNFA nfa)
+
+        -- Devuelve los estados alcanzables desde un conjunto de estados con un símbolo
+        move :: Set State -> Char -> Set State
+        move estados simbolo =
+            Set.unions [ Set.fromList qs
+                       | (q, a, qs) <- Set.toList (transitionsNFA nfa)
+                       , q `Set.member` estados
+                       , a == simbolo
+                       , not (null qs)
+                       ]
+
+        -- Construcción recursiva de los estados del DFA
+        build :: [Set State] -> Set (Set State) -> Map.Map (Set State, Char) (Set State)
+              -> (Set (Set State), Map.Map (Set State, Char) (Set State))
+        build [] visitados delta = (visitados, delta) -- si no hay más edos por procesar, devuelve los visitados y las transiciones
+        build (actual:cola) visitados delta =
+            let alfabeto = Set.toList (alphabetNFA nfa)
+                movimientos = [ (a, move actual a) | a <- alfabeto, not (Set.null (move actual a)) ] --indica para donde moverse con cada símbolo
+                nuevos = [ s | (_, s) <- movimientos, not (s `Set.member` visitados) ] -- estados que aún no se visitan
+                delta' = foldr (\(a,s) acc -> Map.insert (actual,a) s acc) delta movimientos -- actualiza las transiciones
+            in build (cola ++ nuevos) (Set.union visitados (Set.fromList nuevos)) delta'
+
+        -- Ejecutar la construcción
+        (allStates, deltaMap) = build [startSet] (Set.singleton startSet) Map.empty
+
+        -- Asignar IDs únicos (Int) a cada conjunto de estados empezando desde el 0
+        stateIDs :: Map.Map (Set State) State
+        stateIDs = Map.fromList $ zip (Set.toList allStates) [0..]
+
+        -- Generar las transiciones del DFA
+        deltaDFA = Set.fromList
+          [ (idOf qSet, a, idOf qSet')
+          | ((qSet, a), qSet') <- Map.toList deltaMap
+          ]
+          where
+          idOf s = fromMaybe (error "Estado faltante)") (Map.lookup s stateIDs)
+
+
+        -- Calcula los estados finales del DFA, es final si contiene un estado final del NFA 
+        finals :: [State]
+        finals =
+          [ stateIDs Map.! s
+          | s <- Set.toList allStates
+          , any (`elem` finalNFA nfa) (Set.toList s)
+          ]
+
+  -- Construye el DFA final 
+  in DFA
+       { states = Set.fromList (Map.elems stateIDs)
+       , alphabet = alphabetNFA nfa
+       , transitions = deltaDFA
+       , start = stateIDs Map.! startSet
+       , final = finals
+       }
+
+-- Transición extendida de un DFA
+deltaHat :: DFA -> State -> Char -> Maybe State
+deltaHat dfa q c =
+  case [q' | (q1, a, q') <- Set.toList (transitions dfa), q1 == q, a == c] of
+    (q':_) -> Just q'
+    []     -> Nothing
