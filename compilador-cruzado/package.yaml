@@ -30,7 +30,6 @@ ghc-options:
 - -Widentities
 - -Wincomplete-record-updates
 - -Wincomplete-uni-patterns
-#- -Wmissing-Sentenciaort-lists
 - -Wmissing-home-modules
 - -Wpartial-fields
 - -Wredundant-constraints
@@ -42,6 +41,7 @@ library:
     - Analisis.Parser
     - Sintesis.RI
     - Sintesis.RIx32
+    - Sintesis.RIarm64
   build-tools:
     - alex
     - happy
@@ -50,17 +50,6 @@ executables:
   compilador-cruzado-exe:
     main:                Main.hs
     source-dirs:         app
-    ghc-options:
-    - -threaded
-    - -rtsopts
-    - -with-rtsopts=-N
-    dependencies:
-    - compilador-cruzado
-
-tests:
-  compilador-cruzado-test:
-    main:                Spec.hs
-    source-dirs:         test
     ghc-options:
     - -threaded
     - -rtsopts
