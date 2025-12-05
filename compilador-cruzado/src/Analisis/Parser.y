@@ -26,19 +26,19 @@ import Analisis.Lexer
 %%
 
 -- Definición de la gramática
-S : E {$1}
-    | ident Asigna E  {Asigna $1 $3}
+S : ident Asigna E  {Asigna $1 $3}
 
-E : E '+' E     {Suma $1 $3}
-    | E '-' E   {Resta $1 $3}
+E : E '+' T     {Suma $1 $3}
+    | E '-' T   {Resta $1 $3}
     | T         {$1}
 
-T : T '*' T     {Mult $1 $3}
+T : T '*' F     {Mult $1 $3}
     | F         {$1}
 
 F : '(' E ')'   {$2}
     | num       {Num $1}
     | ident     {Ident $1}
+    | '-' F     {Uminus $2}
 
 {
     
@@ -50,6 +50,7 @@ data AS =  Asigna String AS
     | Resta AS AS
     | Mult AS AS
     | Num Int
+    | Uminus AS
     | Ident String
     deriving (Show)
 }
