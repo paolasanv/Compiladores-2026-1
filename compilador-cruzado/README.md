@@ -14,6 +14,25 @@ A partir de un mismo código fuente se genera el código dependiente para dos ar
 - Stack >= 2.11.1
 - GHC 9.6.4 
 
+## Gramática
+
+Las expresiones que pueden ser procesadas por este compilador cruzado son aquellas que puedan ser derivadas de la siguiente gramática.
+
+S ::= _id_ := E 
+
+E ::= E + T | E - T | T 
+
+T ::= T * F | F 
+
+F ::= ( E ) | -F | _num_ | _id_
+
+Donde:
+
+- num representa números naturales.
+
+- id corresponde a identificadores formados por uno o más caracteres alfabéticos, ya sean mayúsculas o minúsculas.
+
+
 ## Uso
 
 1. En la terminal, a la altura de compilador-cruzado/ compilar el proyecto con
@@ -37,7 +56,7 @@ Ejemplo:
 ```bash
 ===== Compilador cruzado :) ======
 
-> compilador "32-bits" "a:=4*3-(-4+1)"
+> compilador "ATnT" "a:=4*3-(-4+1)"
 
 Lenguaje ensamblador AT&T de 32 bits 
 
@@ -98,7 +117,7 @@ La salida es una lista de intrucciones dependiente de la arquitectura elegida.
 Ejemplo.
 
 ```bash
-ghci> compilador "hola:=3-5*5" X32
+ghci> compilador "hola:=3-5*5" ATnT32
 
 Left [movl $5 %eax;,imull $5 %eax;,movl $3 %ebx;,subl %eax %ebx;,movl %ebx %ecx;,movl %ecx hola;]
 

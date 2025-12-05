@@ -11,18 +11,18 @@ import System.Console.Haskeline
 import Data.Char (toLower)
 
 -- Definición de las arquitecturas destino soportadas por el compilador cruzado
-data Arquitectura = X32 | ARM64 deriving (Show, Eq) 
+data Arquitectura = ATnT32 | ARM64 deriving (Show, Eq) 
 
 leerArquitectura :: String -> Maybe Arquitectura
 leerArquitectura s =
     case s of
-        "32-bits" -> Just X32
+        "atnt32" -> Just ATnT32
         "arm64" -> Just ARM64
         _     -> Nothing
 
 -- Función principal que simula al compilador cruzado
 compilador :: String -> Arquitectura -> Either [Instx32] [Instarm64]
-compilador cadena X32 = Left (codigoObjeto32 $ representacionI $ parser $ lexer cadena)
+compilador cadena ATnT32 = Left (codigoObjeto32 $ representacionI $ parser $ lexer cadena)
 compilador cadena ARM64 = Right (codigoObjeto64 $ representacionI $ parser $ lexer cadena)
 
 repl :: InputT IO ()
@@ -36,7 +36,7 @@ repl = do
             case words xs of
                 ("compilador":arquitectura:resto) -> do
                     case leerArquitectura (map toLower (stripQuotes arquitectura)) of
-                        Nothing -> outputStrLn "Arquitectura no válida (use 32-bits o ARM64)" >> repl
+                        Nothing -> outputStrLn "Arquitectura no válida (use ATnT32 o ARM64)" >> repl
                         Just arq -> do
                             let cadena = stripQuotes $ unwords resto
                             let resultado = compilador cadena arq
@@ -47,7 +47,7 @@ repl = do
                                     outputStrLn "Código objeto (simulado):"
                                     mapM_ (outputStrLn . show) inst
                                 Right inst -> do
-                                    outputStrLn "Lenguaje ensamblador ARM64" 
+                                    outputStrLn "Lenguaje ensamblador ARM de 64 bits" 
                                     outputStrLn $ "Código fuente: " ++ cadena 
                                     outputStrLn "Código objeto (simulado):"
                                     mapM_ (outputStrLn . show) inst
@@ -60,7 +60,7 @@ main :: IO ()
 main = do
     putStrLn "\n=======  Compilador cruzado :)  =======\n"
     putStrLn "Uso: compilador <arquitectura-destino> <cadena>"
-    putStrLn "Arquitecturas disponibles: 32-bits y ARM64\n" 
+    putStrLn "Arquitecturas disponibles: ATnT32 y ARM64\n" 
     runInputT defaultSettings repl
 
 -- Elimina comillas dobles al inicio y final, si existen
