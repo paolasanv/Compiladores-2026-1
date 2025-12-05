@@ -44,21 +44,13 @@ Lenguaje ensamblador AT&T de 32 bits
 Código fuente: a:=4*(-6+1)
 
 Código objeto (simulado):
-
 movl $0 %eax;
-
 subl $6 %eax;
-
 movl %eax %ebx;
-
 addl $1 %ebx;
-
 movl $4 %ecx;
-
 imull %ebx %ecx;
-
 movl %ecx %edx;
-
 movl %edx a;
 
 
@@ -69,19 +61,12 @@ Lenguaje ensamblador ARM64
 Código fuente: a:=4*(-6+1)
 
 Código objeto (simulado):
-
  mov x0, #6
-
  neg x0, x0
-
  mov x2, #1
-
  add x1, x0, x2
-
  mov x3, #4
-
  mul x2, x3, x1
-
  str x2, =a
 
 
