@@ -28,9 +28,9 @@ F ::= ( E ) | -F | _num_ | _id_
 
 Donde:
 
-- num representa números naturales.
+- _num_ representa números naturales.
 
-- id corresponde a identificadores formados por uno o más caracteres alfabéticos, ya sean mayúsculas o minúsculas.
+- _id_ corresponde a identificadores formados por uno o más caracteres alfabéticos, ya sean mayúsculas o minúsculas.
 
 
 ## Uso
@@ -107,7 +107,7 @@ stack build
 stack ghci
 ```
 
-3. Para utilizar el compilador cruzado se debe escribir _compilador [cadena] [arquitectura]_.
+3. Para utilizar el compilador cruzado se debe escribir _compilador [arquitectura] [cadena]_.
 
 Donde _arquitectura_ puede ser ATnT32 o ARM64. 
 
@@ -117,11 +117,11 @@ La salida es una lista de intrucciones dependiente de la arquitectura elegida.
 Ejemplo.
 
 ```bash
-ghci> compilador "hola:=3-5*5" ATnT32
+ghci> compilador ATnT32 "hola:=3-5*5"
 
 Left [movl $5 %eax;,imull $5 %eax;,movl $3 %ebx;,subl %eax %ebx;,movl %ebx %ecx;,movl %ecx hola;]
 
-ghci>  compilador "hola:=3-5*5" ARM64
+ghci>  compilador ARM64 "hola:=3-5*5"
 
 Right [ mov x0, \#5, mov x1, \#5, mul x0, x0, x1, mov x2, \#3, sub x1, x2, x0, str x1, =hola]
 

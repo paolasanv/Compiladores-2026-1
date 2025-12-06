@@ -21,9 +21,9 @@ leerArquitectura s =
         _     -> Nothing
 
 -- Función principal que simula al compilador cruzado
-compilador :: String -> Arquitectura -> Either [Instx32] [Instarm64]
-compilador cadena ATnT32 = Left (codigoObjeto32 $ representacionI $ parser $ lexer cadena)
-compilador cadena ARM64 = Right (codigoObjeto64 $ representacionI $ parser $ lexer cadena)
+compilador ::Arquitectura  -> String -> Either [Instx32] [Instarm64]
+compilador ATnT32 cadena = Left (codigoObjeto32 $ representacionI $ parser $ lexer cadena)
+compilador ARM64 cadena = Right (codigoObjeto64 $ representacionI $ parser $ lexer cadena)
 
 repl :: InputT IO ()
 repl = do
@@ -39,7 +39,7 @@ repl = do
                         Nothing -> outputStrLn "Arquitectura no válida (use ATnT32 o ARM64)" >> repl
                         Just arq -> do
                             let cadena = stripQuotes $ unwords resto
-                            let resultado = compilador cadena arq
+                            let resultado = compilador arq cadena
                             case resultado of
                                 Left inst -> do
                                     outputStrLn "Lenguaje ensamblador AT&T de 32 bits " 
