@@ -16,12 +16,12 @@ intermedioL = ['a'..'z']
 
 -- Nodos hoja correspondientes a los valores básicos de la representación en la arquitectura. 
 data Oper = Registro String
-          | Var1 String
-          | Cons1 Int
+          | Vars String
+          | Const Int
 instance Show Oper where
     show (Registro s) = "%"++s
-    show (Var1 s) = s
-    show (Cons1 i) = "$"++show i
+    show (Vars s) = s
+    show (Const i) = "$"++show i
 
 -- Representación en formato de Árbol de las traducciones de las operaciones en la arquitectura
 data Instx32 = Move Oper Oper
@@ -54,8 +54,8 @@ obtenerR i = "e"++[intermedioL !! n]++"x"
 -- Transforma una direccion de la representación de 3 direcciones a un Oper para la arquitectura.
 -- Las variables y constantes se quedan exactamente igual. Pero se supone que toda variable temporal usada será un registro en la memoria.
 operador32 :: Direccion -> Oper
-operador32 (Var s) = Var1 s
-operador32 (Cons i) = Cons1 i
+operador32 (Var s) = Vars s
+operador32 (Cons i) = Const i
 operador32 (Temporal i) = Registro (obtenerR i)
 
 -- Traducción formal por casos
@@ -64,7 +64,7 @@ traduce :: InsTresDir -> Int -> ([Instx32], Int)
 -- Por el contrario si a es una variable se almacena el valor de b en un registro y luego se vacía este lo contenido en este registro dentro de a variable a.
 traduce (InsCopiado a b) i = case opA of
 			     (Registro _) -> ([Move opB opA], i+1)
-			     (Var1 _) -> ([Move opB (Registro re), Move (Registro re) opA], i+1)
+			     (Vars _) -> ([Move opB (Registro re), Move (Registro re) opA], i+1)
 			    where opA = operador32 a 
 			          opB = operador32 b 
 			          re = obtenerR i
@@ -74,8 +74,8 @@ traduce (InsCopiado a b) i = case opA of
 -- este registro en la variable a.
 traduce (InsUnaria a op b) i = case op of
 			       '-' -> case opA of
-			       	      (Registro _) -> ([Move (Cons1 0) opA, Sub opB opA], i+1)
-			     	      (Var1 _) -> ([Move (Cons1 0) (Registro re), Sub opB (Registro re), Move (Registro re) opA], i+1)
+			       	      (Registro _) -> ([Move (Const 0) opA, Sub opB opA], i+1)
+			     	      (Vars _) -> ([Move (Const 0) (Registro re), Sub opB (Registro re), Move (Registro re) opA], i+1)
 			       where opA = operador32 a
 			             opB = operador32 b
 			             re = obtenerR i
@@ -85,13 +85,13 @@ traduce (InsUnaria a op b) i = case op of
 traduce (InsBinaria a op b c) i = case op of
 			          '+' -> case opA of
 			       	         (Registro _) -> ([Move opB opA, Add opC opA], i+1)
-			     	         (Var1 _) -> ([Move opB (Registro re), Add opC (Registro re), Move (Registro re) opA], i+1)
+			     	         (Vars _) -> ([Move opB (Registro re), Add opC (Registro re), Move (Registro re) opA], i+1)
 			          '-' -> case opA of
 			       	         (Registro _) -> ([Move opB opA, Sub opC opA], i+1)
-			     	         (Var1 _) -> ([Move opB (Registro re), Sub opC (Registro re), Move (Registro re) opA], i+1)
+			     	         (Vars _) -> ([Move opB (Registro re), Sub opC (Registro re), Move (Registro re) opA], i+1)
 			          '*' -> case opA of
 			       	         (Registro _) -> ([Move opB opA, Mult opC opA], i+1)
-			     	         (Var1 _) -> ([Move opB (Registro re), Mult opC (Registro re), Move (Registro re) opA], i+1)
+			     	         (Vars _) -> ([Move opB (Registro re), Mult opC (Registro re), Move (Registro re) opA], i+1)
 			          where opA = operador32 a 
 			                opB = operador32 b 
 			                opC = operador32 c 

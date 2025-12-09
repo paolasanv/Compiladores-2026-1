@@ -6,7 +6,7 @@ import Analisis.Lexer(lexer)
 import Analisis.Parser(parser)
 import Sintesis.RI(representacionI)
 import Sintesis.RIx32(codigoObjeto32, Instx32)
-import Sintesis.RIarm64(codigoObjeto64, Instarm64)
+import Sintesis.RIarm64(codigoObjeto64, InstARM64)
 import System.Console.Haskeline
 import Data.Char (toLower)
 
@@ -21,7 +21,7 @@ leerArquitectura s =
         _     -> Nothing
 
 -- Función principal que simula al compilador cruzado
-compilador ::Arquitectura  -> String -> Either [Instx32] [Instarm64]
+compilador ::Arquitectura  -> String -> Either [Instx32] [InstARM64]
 compilador ATnT32 cadena = Left (codigoObjeto32 $ representacionI $ parser $ lexer cadena)
 compilador ARM64 cadena = Right (codigoObjeto64 $ representacionI $ parser $ lexer cadena)
 
