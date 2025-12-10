@@ -14,8 +14,11 @@ Este repositorio contiene los dos proyectos desarrollados en la asignatura Compi
 ### Proyecto 01: Analizador Léxico
 Implementación de un analizador léxico escrito en Haskell.
 
-Para consultar las especificaciones completas, visita el archivo correspondiente: 
-➡️ [README](analizador-lexico/README.md) del Analizador Léxico.
+Para consultar las especificaciones completas, visita los archivos correspondientes: 
+
+➡️ [README](analizador-lexico/README.md) del porgrama _analizador-lexico_.
+
+➡️ [Reporte (PDF)](analizador-lexico/specs/Un-análisis-IMPortante.pdf) en el que se presenta un análisis detallado de esta fase del proceso de compilación.
  
 Equipo de desarrollo:
 - Arias Villarroel Alejandra Valentina
@@ -30,8 +33,7 @@ Equipo de desarrollo:
 Implementación de la simulación de un compilador cruzado en Haskell, desarrollado como parte del apoyo al siguiente trabajo de investigación:
 ➡️ [Equivalencia Cruzada (PDF)](compilador-cruzado/docs/Equivalencia-cruzada.pdf)
 
-Para más detalles sobre el proyecto, consulta:
-➡️  [README](compilador-cruzado/README.md) del Compilador Cruzado.
+Para más detalles sobre el programa consulta: ➡️  [README](compilador-cruzado/README.md) de _compilador-cruzado_.
 
 
 Equipo de desarrollo:
