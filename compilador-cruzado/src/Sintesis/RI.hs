@@ -1,0 +1,82 @@
+{-|
+Module      : Sintesis.RI
+Description : Representación intermedia utilizando código de tres direcciones
+
+Este módulo implementa una representación intermedia independiente de la máquina. 
+Utiliza código de tres direcciones. Posibles instrucciones:
+
+    a = b       >> Copiado 
+    a = op b    >> Operacion unaria
+    a = b op c  >> Operacion binaria
+
+Donde:
+    > a, b, c son direcciones (variables, constantes, temporales)
+    > op es un operador aritmetico (+, -, *)
+-}
+module Sintesis.RI where
+import Analisis.Parser(AS(..))
+
+data Direccion = Var String   -- Identificadores del codigo fuente
+    | Cons Int                -- Numeros del codigo fuente
+    | Temporal Int            -- Variable temporal generado por el compilador (como t0, t1, ..) 
+instance Show Direccion where
+    show (Var s) = s
+    show (Cons i) = show i
+    show (Temporal n) = "t" ++ show n
+
+data InsTresDir = InsCopiado Direccion Direccion    -- a = b
+    | InsUnaria Direccion Char Direccion            -- a = op b
+    | InsBinaria Direccion Char Direccion Direccion -- a = b op c
+
+instance Show InsTresDir where
+    show (InsCopiado a b) = show a ++ " = " ++ show b
+    show (InsUnaria a op b) = show a ++ " = " ++ show op ++ " " ++ show b
+    show (InsBinaria a op b c) = show a ++ " = " ++ show b ++ " " ++ show op ++ " " ++ show c
+
+-- Generación de instrucciones con contador de temporales
+generaIns :: AS -> Int -> ([InsTresDir], Direccion, Int)
+generaIns (Num i) n = ([], Cons i, n)
+generaIns (Ident s) n = ([], Var s, n)
+generaIns (Uminus e) n =
+    let 
+        (insE, opE, n1) = generaIns e n -- Instrucciones de la expresion
+        t = Temporal n1                 -- Nuevo temporal 
+        instr = InsUnaria t '-' opE     -- Instruccion unaria
+    in
+        (insE ++ [instr], t, n1+1)
+generaIns (Suma i d) n =
+    let 
+        (insA, opA, n1) = generaIns i n  -- Instrucciones del lado izquierdo
+        (insB, opB, n2) = generaIns d n1 -- Instrucciones del lado derecho 
+        t = Temporal n2                  -- Nuevo temporal 
+        instr = InsBinaria t '+' opA opB
+    in
+        (insA ++ insB ++ [instr], t, n2+1)
+generaIns (Resta i d) n =
+    let 
+        (insA, opA, n1) = generaIns i n
+        (insB, opB, n2) = generaIns d n1
+        t = Temporal n2 
+        instr = InsBinaria t '-' opA opB
+    in
+        (insA ++ insB ++ [instr], t, n2+1)
+generaIns (Mult i d) n =
+    let 
+        (insA, opA, n1) = generaIns i n
+        (insB, opB, n2) = generaIns d n1
+        t = Temporal n2 
+        instr = InsBinaria t '*' opA opB
+    in
+        (insA ++ insB ++ [instr], t, n2+1)
+generaIns (Asigna i e) n=
+    let 
+        (insE, opE, n1) = generaIns e n -- Instrucciones de la expresion
+        instr = InsCopiado (Var i) opE  -- Instruccion de copiado
+    in 
+        (insE ++ [instr], Var i, n1)
+
+--Función principar que simula la representación intermedia              
+representacionI :: AS -> [InsTresDir]
+representacionI as = a
+    where 
+        (a,_,_) = generaIns as 0
