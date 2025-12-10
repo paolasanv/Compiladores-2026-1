@@ -25,7 +25,6 @@ stack run
 
 ## Uso
 
-En la rama **proyecto1/analizador-lexico-imp**
 
 1. Se proporciona un archivo de texto llamado [_regex.txt_](regex.txt) que incluye por defecto las expresiones regulares de IMP. En caso de que se desee realizar modificaciones, se recomienda consultar el documento [specs/IMP.md](specs/IMP.md) 
  para asegurar una edición correcta.
